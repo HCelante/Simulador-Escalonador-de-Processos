@@ -1,4 +1,9 @@
-
+# BLOCO DE CONTROLE DE PROCESSOS ##############
+## CLASS BCP                     ##############
+### METODOS CONSTRUTORES         ##############
+### METODOS UPDATE               ##############
+### METODOS FEEDBACK             ##############
+###############################################
 
 class BCP: # Bloco de Controle de processos
     def __init__(self, context):

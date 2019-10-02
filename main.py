@@ -1,6 +1,6 @@
-import /src/Gerenciador
+import src.Gerenciador
 
-def main()
+def main():
     pass
 
 main()
