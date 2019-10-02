@@ -32,6 +32,10 @@ class Queue: # fila circular
             self.indexQueue = 0
             return actual
         
-
+    def isEmpty(self):
+        if(len(self.sentinel) == 0):
+            return True
+        else:
+            return False
  
    

@@ -6,8 +6,8 @@
 ##############################################
 
 
-import bcp             # BLOCO DE CONTROLE DE PROCESSO
-import Queue as Q      # FILA CIRCULAR
+import models.bcp             # BLOCO DE CONTROLE DE PROCESSO
+import models.Queue as Q      # FILA CIRCULAR
 import schedulers.Dnmc # PRIORIDADE DINAMICA
 import schedulers.JSF  # JOB SHORTEST FIRST
 import schedulers.RR   # ROUND ROBIN
@@ -20,6 +20,8 @@ class Manager:                                          # Gerenciador de process
         self.QueueBloq       = Q.Queue(True)            # fila de bloqueados
         self.List_QRdy       = self.construc_listQ(nfilas) # lista de fila de prontos
         self.QueueNCri       = Q.Queue(False)           # fila de processos nao criados
+        self.indexQRdy       = 0
+
 
     # METODOS DE CONSTRUCAO ######################################################
     def construc_listQ(self, nfilas):
@@ -27,9 +29,16 @@ class Manager:                                          # Gerenciador de process
         for n in range(nfilas):
             listqrd.append(Q.Queue(False))
         return listqrd
+
+
+
     # METODOS DE GERENCIA ########################################################
-    def consome(self):                      # consome os processos
-        pass
+    def updateQ_Priority(self, cond):                      # consome os processos
+        if ("AB" == cond):                               # consome primeiro a e debois b
+            if(self.List_QRdy[self.indexQRdy].isEmpty() == True):
+                self.indexQRdy = self.indexQRdy + 1
+
+    
     
 
 
