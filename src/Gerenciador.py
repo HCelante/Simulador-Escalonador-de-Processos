@@ -5,21 +5,24 @@
 ### METODOS DE FEEDBACK             ##########
 ##############################################
 
+import sys
+#sys.path.append('models')
+#print(sys.path)
 
-import models.bcp             # BLOCO DE CONTROLE DE PROCESSO
-import models.Queue as Q      # FILA CIRCULAR
-import schedulers.Dnmc # PRIORIDADE DINAMICA
-import schedulers.JSF  # JOB SHORTEST FIRST
-import schedulers.RR   # ROUND ROBIN
+from src.models.bcp import BCP             # BLOCO DE CONTROLE DE PROCESSO
+from src.models.Queue import Queue as Q     # FILA CIRCULAR
+from src.schedulers.Dnmc import * # PRIORIDADE DINAMICA
+from src.schedulers.SJF import * # JOB SHORTEST FIRST
+from src.schedulers.RR  import * # ROUND ROBIN
 
 
 # GERENCIADOR DE PROCESSOS #######################################################
 class Manager:                                          # Gerenciador de processos
     def __init__(self, nfilas):                         # metodo inicializador
         self.Timestamp       = 0                        # tempo da cpu
-        self.QueueBloq       = Q.Queue(True)            # fila de bloqueados
+        self.QueueBloq       = Q(True)            # fila de bloqueados
         self.List_QRdy       = self.construc_listQ(nfilas) # lista de fila de prontos
-        self.QueueNCri       = Q.Queue(False)           # fila de processos nao criados
+        self.QueueNCri       = Q(False)           # fila de processos nao criados
         self.indexQRdy       = 0
 
 
@@ -27,7 +30,7 @@ class Manager:                                          # Gerenciador de process
     def construc_listQ(self, nfilas):
         listqrd = []
         for n in range(nfilas):
-            listqrd.append(Q.Queue(False))
+            listqrd.append(Q(False))
         return listqrd
 
 

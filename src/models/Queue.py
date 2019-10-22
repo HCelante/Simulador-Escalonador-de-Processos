@@ -4,7 +4,7 @@
 ### METODOS DE RETORNO        ######## 
 ######################################
 
-import bcp 
+from src.models.bcp import BCP as bcp 
 
  
 class Queue: # fila circular
