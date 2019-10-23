@@ -24,11 +24,11 @@ class BCP: # Bloco de Controle de processos
         if type(use) == int:
             self.procCPUuse +=  use
         else:
-            return print("Inserir apenas valores inteiros!!!")
+            print("Inserir apenas valores inteiros!!!")
 
     def set_procPriority(self, priority):
         if type(priority) == int:
             self.procPriority = priority
         else:
-            return print("Inserir apenas valores inteiros!!!")
+            print("Inserir apenas valores inteiros!!!")
     

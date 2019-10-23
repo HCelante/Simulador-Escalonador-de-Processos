@@ -29,7 +29,7 @@ class Manager:                                          # Gerenciador de process
     # METODOS DE CONSTRUCAO ######################################################
     def construc_listQ(self, nfilas):
         listqrd = []
-        for n in range(nfilas):
+        for n in range(len(nfilas)):
             listqrd.append(Q(False))
         return listqrd
 
