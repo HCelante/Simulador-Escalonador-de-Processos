@@ -18,12 +18,13 @@ class Queue: # fila circular
 
 
     def queueOne(self, procbcp):# recebe o bloco de controle de processo referente ao processo à ser infileirado
-        if type(procbcp) == bcp:
+        if type(procbcp) == type(bcp):
             self.sentinel.append(procbcp)
         else:
             print("Inserir apenas itens do tipo bcp.")
 
-    def get_prox(self): # retorna o indice do processo atual e ja muda para o proximo elemento da lista, retornando o indice para o controlador de processos alterar diretamente no bcp correto
+    def get_prox(self): # retorna o indice do processo atual e ja muda para o proximo elemento da lista, 
+                        # retornando o indice para o controlador de processos alterar diretamente no bcp correto
         actual =  self.indexQueue
         if ((self.indexQueue + 1) < len(self.sentinel)):
             self.indexQueue = self.indexQueue + 1

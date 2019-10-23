@@ -9,22 +9,22 @@ import sys
 #sys.path.append('models')
 #print(sys.path)
 
-from src.models.bcp import BCP             # BLOCO DE CONTROLE DE PROCESSO
+from src.models.bcp import BCP              # BLOCO DE CONTROLE DE PROCESSO
 from src.models.Queue import Queue as Q     # FILA CIRCULAR
-from src.schedulers.Dnmc import * # PRIORIDADE DINAMICA
-from src.schedulers.SJF import * # JOB SHORTEST FIRST
-from src.schedulers.RR  import * # ROUND ROBIN
+from src.schedulers.Dnmc import *           # PRIORIDADE DINAMICA
+from src.schedulers.SJF import *            # JOB SHORTEST FIRST
+from src.schedulers.RR  import *            # ROUND ROBIN
 
 
 # GERENCIADOR DE PROCESSOS #######################################################
 class Manager:                                          # Gerenciador de processos
     def __init__(self, nfilas):                         # metodo inicializador
         self.Timestamp       = 0                        # tempo da cpu
-        self.QueueBloq       = Q(True)            # fila de bloqueados
+        self.QueueBloq       = Q(True)                  # fila de bloqueados
         self.List_QRdy       = self.construc_listQ(nfilas) # lista de fila de prontos
-        self.QueueNCri       = Q(False)           # fila de processos nao criados
+        self.QueueNCri       = Q(False)                 # fila de processos nao criados
         self.indexQRdy       = 0
-
+        self.init_tms        = []                       # lista de tempos de entrada de processos
 
     # METODOS DE CONSTRUCAO ######################################################
     def construc_listQ(self, nfilas):
@@ -32,6 +32,20 @@ class Manager:                                          # Gerenciador de process
         for n in range(nfilas):
             listqrd.append(Q(False))
         return listqrd
+
+    def construc_QNC(self, listadeBCPS): 
+    # constroi a lista de processos nao criados e ordenados por tempo de entrada
+        QueueNC = Q(False)
+        listBCPSOrd = sorted(listadeBCPS, key = listadeBCPS.procIniHr) # ordenado os processos por tempo de entrada
+        self.init_tms = listBCPSOrd[:].procIniHr                       # lista com tempos de entrada para o fluxo de execucao saber quando jogar os processos pra fila
+        
+        # coloca os processos na fila criada
+        for processo in listBCPSOrd:                                        
+            QueueNC.queueOne(processo)
+
+        self.QueueNCri = QueueNC                                        # retorna para a fila de nao criados
+
+
 
 
 
@@ -41,23 +55,65 @@ class Manager:                                          # Gerenciador de process
             if(self.List_QRdy[self.indexQRdy].isEmpty() == True):
                 self.indexQRdy = self.indexQRdy + 1
 
-    
+
+    def exec_loop(self, cond, optscheduler): # fluxo de execucao para os escalonadores
+
+
+        # Se Round Robin escolhido
+        if optscheduler == 'RR' or 'rr':
+            self.Timestamp = 0
+            while True: 
+                # fluxo de execucao do RR
+
+                # se o tempo de execucao atual esta na lista de tempos de entrada de novos processos
+                if(self.Timestamp in self.init_tms): 
+                    # enfilera os processos com o tempo de entrada igual Timestamp
+                    pass
+
+                pass
+
+        # Se Prioridade Dinamica        
+        if optscheduler == 'DNMC' or 'dnmc':
+            while True:
+                # fluxo de execucao do DNMC 
+
+                # se o tempo de execucao atual esta na lista de tempos de entrada de novos processos
+                if(self.Timestamp in self.init_tms): 
+                    # enfilera os processos com o tempo de entrada igual Timestamp
+                    pass
+
+
+                pass
+        
+        if optscheduler == 'SJF' or 'sjf':
+            while True:
+                # fluxo de execucao do SJF
+
+                # se o tempo de execucao atual esta na lista de tempos de entrada de novos processos
+                if(self.Timestamp in self.init_tms): 
+                    # enfilera os processos com o tempo de entrada igual Timestamp
+                    pass
+
+                pass
+
+
+
     
 
 
 
     # METODOS DE FEEDBACK ########################################################
-    def calculaTME(self):                   # calcula tempos medio de espera
+    def calc_TME(self):                   # calculo do tempo medio de espera
         pass
 
-    def calculaTTE(self):                   # calcula tempo total de espera
+    def calc_TTE(self):                   # calculo tempo total de espera
         pass
     
-    def calculaThrgpt(self):                # calcula throughput do sistema
+    def calc_Thrgpt(self):                # calculo throughput do sistema
         pass
 
-    def calculaTMTMF(self):                 # calcula tamanho maximo e medio das filas
+    def calc_TMTMF(self):                 # calculo tamanho maximo e medio das filas
         pass
 
-    def calculaTRM(self):                   # calcula tempo de resposta medio
+    def calc_TRM(self):                   # calculo tempo de resposta medio
         pass
