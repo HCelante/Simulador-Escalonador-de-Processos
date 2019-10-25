@@ -58,7 +58,12 @@ def getProcess(filename):   #Adiciona os processos a uma lista de processos
   return processList
 
 def main():
-    print(getConfigurations(sys.argv[1]))
-    print (getProcess(sys.argv[2]))
-
+    #print(getConfigurations(sys.argv[1]))
+    procList = getProcess(sys.argv[2])
+    
+    mainProcess = []
+    for i in range (len(procList)):
+      mainProcess.append(BCP(procList[i]))
+    print(mainProcess[0].procIOTime)
+    
 main()
