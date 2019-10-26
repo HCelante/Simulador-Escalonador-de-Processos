@@ -85,7 +85,12 @@ class Manager:                                          # Gerenciador de process
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
                     if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
-                        self.List_QRdy[0].queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+                        self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+
+                if(len(self.List_QRdy[self.indexQRdy]) > 0):
+                    #se tiver o que consumir 
+                    #consome
+                    pass
                         
                 pass
    
@@ -100,7 +105,8 @@ class Manager:                                          # Gerenciador de process
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
                     if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
-                        self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+                        # definir qual criterio para selacao de fila
+                        #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
                         
                 pass
    
@@ -113,7 +119,8 @@ class Manager:                                          # Gerenciador de process
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
                     if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
-                        self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+                        # definir qual criterio para selacao de fila
+                        #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
 
                     pass
 
@@ -126,6 +133,7 @@ class Manager:                                          # Gerenciador de process
 
 
     # METODOS DE FEEDBACK ########################################################
+
     def calc_TME(self):                   # calculo do tempo medio de espera
         pass
 
