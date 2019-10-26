@@ -85,7 +85,7 @@ class Manager:                                          # Gerenciador de process
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
                     if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
-                        self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+                        self.List_QRdy[0].queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
                         
                 pass
    
