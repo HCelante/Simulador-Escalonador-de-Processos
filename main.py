@@ -59,22 +59,31 @@ def getProcess(filename):   #Adiciona os processos a uma lista de processos
   return processList
 
 def main():
-    #print(getConfigurations(sys.argv[1]))
+    confs = getConfigurations(sys.argv[1])
     procList = getProcess(sys.argv[2])
     
     mainProcess = []
     for i in range (len(procList)):
       mainProcess.append(BCP(procList[i]))
-    print(mainProcess[0].procIOTime)
-    print(type(mainProcess[0]))
+    # print(mainProcess[0].procIOTime)
+    # print(type(mainProcess[0]))
 
+    rrProcess = mainProcess.copy()  # cópia dos processos
+    sjfProcess = mainProcess.copy()
+    dnmcProcess = mainProcess.copy()
+    
     # Recebe o numero de filas
-    nfilas = input("\nEntre com o numero de filas:")
+    nfilas = 2
     
     # Instanciando a classe Manager
     Managed = Manager(nfilas)
     
     # Populando a fila de nao criados
-    Managed.construc_QNC(mainProcess)
+    #Managed.construc_QNC(rrProcess)
+    
+    print(confs)
+    Managed.reset_Manager(nfilas)
+    #Managed.construc_QNC(sjfProcess)
+    #Managed.exec_loop('SJF', confs)
 
 main()

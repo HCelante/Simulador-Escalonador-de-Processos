@@ -26,6 +26,15 @@ class Manager:                                          # Gerenciador de process
         self.indexQRdy       = 0
         self.init_tms        = []                       # lista de tempos de entrada de processos
 
+    # método de reset do gerenciador
+    def reset_Manager(self, nfilas):
+        self.Timestamp       = 0
+        self.QueueBloq       = Q(True)
+        self.List_QRdy       = self.construc_listQ(nfilas)
+        self.QueueNCri       = Q(False)
+        self.indexQRdy       = 0
+        self.init_tms        = []
+        
     # METODOS DE CONSTRUCAO ######################################################
     def construc_listQ(self, nfilas):
         listqrd = []
@@ -38,22 +47,22 @@ class Manager:                                          # Gerenciador de process
     # constroi a lista de processos nao criados e ordenados por tempo de entrada
         QueueNC = Q(False)
         tmsIN = []
-        listaBCPorD = []
+        listaBCPOrd = []
         for bcp in listadeBCPS:
             tmsIN.append( bcp.procArrivalTime)
 
         # lista de tempos de entrada criada
         self.init_tms = sorted(set(tmsIN))
         #for tmm in self.init_tms:
-        #    listaBCPorD.append([tmm]) 
+        #    listaBCPOrd.append([tmm]) 
         # ordenado os processos por tempo de entrada    
 
-        #print(listaBCPorD)
+        #print(listaBCPOrd)
         for bcp in listadeBCPS:
             for init in self.init_tms:
                 if(init == bcp.procArrivalTime):
-                    listaBCPorD.append(bcp)
-        #print(listaBCPorD[0].procArrivalTime)
+                    listaBCPOrd.append(bcp)
+        #print(listaBCPOrd[0].procArrivalTime)
         # coloca os processos na fila criada
         for processo in listadeBCPS:   
             #print(type(processo))                                     
@@ -74,13 +83,13 @@ class Manager:                                          # Gerenciador de process
                 self.indexQRdy = self.indexQRdy + 1
 
 
-    def exec_loop(self, cond, optscheduler): # fluxo de execucao para os escalonadores
-
+    def exec_loop(self, optscheduler, confs): # fluxo de execucao para os escalonadores
+    #optscheduler = tipo do schedule  confs = configuraçoes do escalonadores
         finished = []
         # Se Round Robin escolhido
         if optscheduler == 'RR' or 'rr':
             self.Timestamp = 0
-            qt = input("\nInsira o quantum desejado: ")
+            qt = confs[0][0]
             RR = RR(qt)
             while True: 
                 # fluxo de execucao do RR
@@ -98,7 +107,7 @@ class Manager:                                          # Gerenciador de process
                     terminado = self.List_QRdy[self.indexQRdy].check_Status(self.List_QRdy[self.indexQRdy].get_AIndex()) # checa o status do processo, se terminado é retirado da queue 
                     if terminado != None: # se o processo terminou
                         finished.append(terminado) # vai pra lista de terminados
-                    elif consumo_atual == quantum : # se ja consumiu todo o quantum que pode nessa rodada
+                    elif consumo_atual == qt : # se ja consumiu todo o quantum que pode nessa rodada
                         self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons = 0 # seu quantum consumido zera 
                         self.List_QRdy[self.indexQRdy].next_index() # e é vez do proximo
 
@@ -120,8 +129,8 @@ class Manager:                                          # Gerenciador de process
                         # definir qual criterio para selacao de fila
                         #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
                         
-                pass
-   
+                        pass
+                    pass
 
             pass
         
@@ -134,8 +143,8 @@ class Manager:                                          # Gerenciador de process
                         # definir qual criterio para selacao de fila
                         #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
 
+                        pass
                     pass
-
             pass
 
 
