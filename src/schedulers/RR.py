@@ -16,14 +16,14 @@ class RR:
             if (bcp.procQT_act == (self.Quantum -1)):      # se esta para consumir seu ultimo quantum dessa execucao
                 bcp.procQT_act = bcp.procQT_act + 1        
                 bcp.procCPUuse = bcp.procCPUuse + 1
-                bcp.procState = 'pronto'                   # fica pronto
+                bcp.procState = 0                   # fica pronto
             else:                                          # se nao
                 bcp.procQT_act = bcp.procQT_act + 1
                 bcp.procCPUuse = bcp.procCPUuse + 1
-                bcp.procState = 'executando'               # continua executando
+                bcp.procState = 1               # continua executando
         
         elif(bcp.procCPUuse == bcp.procDuration ):           # se ja usou tudo q precisava
-            bcp.procState = 'terminado'                    # termina o processo
+            bcp.procState = 2                    # termina o processo
         
         else:
             print("Nao consumido, conferir o codigo!")
