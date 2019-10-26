@@ -37,12 +37,29 @@ class Manager:                                          # Gerenciador de process
     def construc_QNC(self, listadeBCPS): 
     # constroi a lista de processos nao criados e ordenados por tempo de entrada
         QueueNC = Q(False)
-        listBCPSOrd = sorted(listadeBCPS, key = listadeBCPS.procIniHr) # ordenado os processos por tempo de entrada
-        self.init_tms = listBCPSOrd[:].procIniHr                       # lista com tempos de entrada para o fluxo de execucao saber quando jogar os processos pra fila
-        
+        tmsIN = []
+        listaBCPorD = []
+        for bcp in listadeBCPS:
+            tmsIN.append( bcp.procIniHr)
+
+        # lista de tempos de entrada criada
+        self.init_tms = sorted(set(tmsIN))
+        #for tmm in self.init_tms:
+        #    listaBCPorD.append([tmm]) 
+        # ordenado os processos por tempo de entrada    
+
+        #print(listaBCPorD)
+        for bcp in listadeBCPS:
+            for init in self.init_tms:
+                if(init == bcp.procIniHr):
+                    listaBCPorD.append(bcp)
+        #print(listaBCPorD[0].procIniHr)
         # coloca os processos na fila criada
-        for processo in listBCPSOrd:                                        
+        for processo in listadeBCPS:   
+            #print(type(processo))                                     
             QueueNC.queueOne(processo)
+        #print(QueueNC)
+        print("\n Numero de processos enfileirados na de Nao Criados: ",len(listadeBCPS))
 
         self.QueueNCri = QueueNC                                        # retorna para a fila de nao criados
 

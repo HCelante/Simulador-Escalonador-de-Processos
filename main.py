@@ -66,13 +66,15 @@ def main():
     for i in range (len(procList)):
       mainProcess.append(BCP(procList[i]))
     print(mainProcess[0].procIOTime)
-
+    print(type(mainProcess[0]))
 
     # Recebe o numero de filas
-    nfilas = input("\nEntre com o numerod e filas:")
+    nfilas = input("\nEntre com o numero de filas:")
     
     # Instanciando a classe Manager
     Managed = Manager(nfilas)
     
-    # 
+    # Populando a fila de nao criados
+    Managed.construc_QNC(mainProcess)
+
 main()
