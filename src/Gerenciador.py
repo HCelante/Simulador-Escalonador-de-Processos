@@ -40,7 +40,7 @@ class Manager:                                          # Gerenciador de process
         tmsIN = []
         listaBCPorD = []
         for bcp in listadeBCPS:
-            tmsIN.append( bcp.procIniHr)
+            tmsIN.append( bcp.procArrivalTime)
 
         # lista de tempos de entrada criada
         self.init_tms = sorted(set(tmsIN))
@@ -51,9 +51,9 @@ class Manager:                                          # Gerenciador de process
         #print(listaBCPorD)
         for bcp in listadeBCPS:
             for init in self.init_tms:
-                if(init == bcp.procIniHr):
+                if(init == bcp.procArrivalTime):
                     listaBCPorD.append(bcp)
-        #print(listaBCPorD[0].procIniHr)
+        #print(listaBCPorD[0].procArrivalTime)
         # coloca os processos na fila criada
         for processo in listadeBCPS:   
             #print(type(processo))                                     
@@ -82,11 +82,10 @@ class Manager:                                          # Gerenciador de process
             self.Timestamp = 0
             while True: 
                 # fluxo de execucao do RR
-
+                if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
+                    self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
                 # se o tempo de execucao atual esta na lista de tempos de entrada de novos processos
-                if(self.Timestamp in self.init_tms): 
-                    # enfilera os processos com o tempo de entrada igual Timestamp
-                    pass
+                
 
                 pass
 
@@ -96,7 +95,8 @@ class Manager:                                          # Gerenciador de process
                 # fluxo de execucao do DNMC 
 
                 # se o tempo de execucao atual esta na lista de tempos de entrada de novos processos
-                if(self.Timestamp in self.init_tms): 
+                if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
+
                     # enfilera os processos com o tempo de entrada igual Timestamp
                     pass
 
@@ -108,8 +108,8 @@ class Manager:                                          # Gerenciador de process
                 # fluxo de execucao do SJF
 
                 # se o tempo de execucao atual esta na lista de tempos de entrada de novos processos
-                if(self.Timestamp in self.init_tms): 
-                    # enfilera os processos com o tempo de entrada igual Timestamp
+                if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
+                    # enfilera os processos com o tempo de entrada maior ou igual Timestamp
                     pass
 
                 pass

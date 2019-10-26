@@ -20,7 +20,8 @@ class Queue: # fila circular
     def queueOne(self, procbcp):# recebe o bloco de controle de processo referente ao processo à ser infileirado
         self.sentinel.append(procbcp)
 
-
+    def get_atual(self):
+        return self.sentinel[self.indexQueue]
     def get_prox(self): # retorna o indice do processo atual e ja muda para o proximo elemento da lista, 
                         # retornando o indice para o controlador de processos alterar diretamente no bcp correto
         actual =  self.indexQueue
