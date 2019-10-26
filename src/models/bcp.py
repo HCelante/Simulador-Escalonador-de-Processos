@@ -10,29 +10,36 @@ class BCP: # Bloco de Controle de processos
 
         # INFORMACOES DE PROCESSO
         self.procID = context[0]
-        self.procDuration = context[1]     # duracao do processo
-        self.procPriority = context[2]  # prioridade do processo
-        self.procIniHr = context[3]     # momento que o processo foi iniciado
-        self.procIOTime = context[4 :]
+        self.procPriority = context[2]      # prioridade do processo
+        self.procIOTime = context[4 :]      # eventos de IO
+        self.procQtCons = 0                 # quantum consumido
+        self.procState = 0                  # estado do processo 0 para pronto 1 para executando -1 para bloqueado
+        self.procBurstTime = context[1]     # duracao do processo
+        self.procArrivalTime = context[3]   # momento que o processo foi iniciado
+        self.procCompletionTime = 0         # momento que o processo foi finalizado
+        self.procResponseTime = 0           # tempo de resposta do processo
+        self.procTurnaroundTime = 0         # tempo total de execução do processo
+        self.procWaitingTime = 0            # tempo de espera do processo na fila de pronto
         
-        # self.procQt_act = context[1]     # quantum consumido parcialmente
+        # self.procCPUuse = 0                 # tempo usado da cpu
         # self.schedParam = context[2]    # parametros do schelude
         # self.procParent = context[3]    # id do processo pai
-        # self.procCPUuse = context[4]    # tempo usado da cpu
         # self.procGroup = context[5]     # grupo do processo
-        # self.procState = context[7]     # estado do processo
-        
  
-    def set_procCPUuse(self, use):
-        if type(use) == int:
-            #self.procCPUuse +=  use
-            pass
-        else:
-            print("Inserir apenas valores inteiros!!!")
+    # def set_procCPUuse(self, use):
+    #     if type(use) == int:
+    #         self.procTurnaroundTime +=  use #nao é isso
+    #     else:
+    #         print("Inserir apenas valores inteiros!!!")
 
-    def set_procPriority(self, priority):
-        if type(priority) == int:
-            self.procPriority = priority
-        else:
-            print("Inserir apenas valores inteiros!!!")
-    
+    # def set_procPriority(self, priority):
+    #     if type(priority) == int:
+    #         self.procPriority = priority
+    #     else:
+    #         print("Inserir apenas valores inteiros!!!")
+    def calculate_Turnaround(self):
+        self.procTurnaroundTime = self.procCompletionTime - self.procArrivalTime
+        
+    def calculate_Waiting(self):
+        self.procWaitingTime = self.procTurnaroundTime - self.procBurstTime
+        
