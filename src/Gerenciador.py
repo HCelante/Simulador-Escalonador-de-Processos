@@ -82,37 +82,42 @@ class Manager:                                          # Gerenciador de process
             self.Timestamp = 0
             while True: 
                 # fluxo de execucao do RR
-                if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
-                    self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
-                # se o tempo de execucao atual esta na lista de tempos de entrada de novos processos
+                if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
+                    #confere se tem processos para serem criados
+                    if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
+                        self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+                        
+                pass
+   
                 
 
-                pass
+            pass
 
         # Se Prioridade Dinamica        
         if optscheduler == 'DNMC' or 'dnmc':
             while True:
                 # fluxo de execucao do DNMC 
-
-                # se o tempo de execucao atual esta na lista de tempos de entrada de novos processos
-                if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
-
-                    # enfilera os processos com o tempo de entrada igual Timestamp
-                    pass
-
-
+                if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
+                    #confere se tem processos para serem criados
+                    if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
+                        self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+                        
                 pass
+   
+
+            pass
         
         if optscheduler == 'SJF' or 'sjf':
             while True:
                 # fluxo de execucao do SJF
+                if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
+                    #confere se tem processos para serem criados
+                    if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
+                        self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
 
-                # se o tempo de execucao atual esta na lista de tempos de entrada de novos processos
-                if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
-                    # enfilera os processos com o tempo de entrada maior ou igual Timestamp
                     pass
 
-                pass
+            pass
 
 
 
