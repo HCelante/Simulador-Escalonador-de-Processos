@@ -15,7 +15,7 @@ class Queue: # fila circular
         if bloqd == True : # se for uma fila de bloqueados
             self.totalTime = 0 # tempo total de espera para os processos nessa fila
         
-    def check_status(self): # cehca o status dos processos e da pop nos terminados e retorna uma lista de terminados
+    def check_Status_All(self): # cehca o status dos processos e da pop nos terminados e retorna uma lista de terminados
         terminated = []
         for bcpindex in range(len(self.sentinel)):
             if(self.sentinel[bcpindex].procState == 2): # se processo terminado~
@@ -24,26 +24,36 @@ class Queue: # fila circular
 
         return terminated # retorna a lista de processos terminados para que possam ser enfileirados na de terminados
 
-
-
+    def check_Status(self, index):
+        terminated = []
+        if(self.sentinel[index].procState == 2): # se processo terminado~
+            terminated.append(self.sentinel[index])
+            self.sentinel.pop(index)
+            return terminated
+        else:
+            return None
 
 
     def queueOne(self, procbcp): # recebe o bloco de controle de processo referente ao processo à ser infileirado
         self.sentinel.append(procbcp)
 
-    def get_atual(self): # retorna o atual processos da fila sem incrementar o index
+    def get_actual(self): # retorna o atual processos da fila sem incrementar o index
         return self.sentinel[self.indexQueue]
 
+    def get_AIndex(self):
+        return self.indexQueue
 
-    def get_prox(self): # retorna o indice do processo atual e ja muda para o proximo elemento da lista, 
-                        # retornando o indice para o controlador de processos alterar diretamente no bcp correto
-        actual =  self.indexQueue
-        if ((self.indexQueue + 1) < len(self.sentinel)):
-            self.indexQueue = self.indexQueue + 1
-            return actual
-        else:
-            self.indexQueue = 0
-            return actual
+    def next_index(self):
+        self.indexQueue = self.indexQueue + 1
+    #def get_prox(self): # retorna o indice do processo atual e ja muda para o proximo elemento da lista, 
+    #                    # retornando o indice para o controlador de processos alterar diretamente no bcp correto
+    #    actual =  self.indexQueue
+    #    if ((self.indexQueue + 1) < len(self.sentinel)):
+    #        self.indexQueue = self.indexQueue + 1
+    #        return actual
+    #    else:
+    #        self.indexQueue = 0
+    #        return actual
         
     def isEmpty(self):
         if(len(self.sentinel) == 0):

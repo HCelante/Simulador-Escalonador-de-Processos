@@ -76,23 +76,35 @@ class Manager:                                          # Gerenciador de process
 
     def exec_loop(self, cond, optscheduler): # fluxo de execucao para os escalonadores
 
-
+        finished = []
         # Se Round Robin escolhido
         if optscheduler == 'RR' or 'rr':
             self.Timestamp = 0
+            qt = input("\nInsira o quantum desejado: ")
+            RR = RR(qt)
             while True: 
                 # fluxo de execucao do RR
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
                     if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
-                        self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+                        self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri[self.QueueNCri.get_AIndex()]) # processo inserido na fila de prontos
 
                 if(len(self.List_QRdy[self.indexQRdy]) > 0):
                     #se tiver o que consumir 
+                    consumo_atual = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons + 1
                     #consome
+                    RR.update_BCPQt( self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]) # consome o quantum
+                    self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons += 1 #adiciona no quantum consumido
+                    terminado = self.List_QRdy[self.indexQRdy].check_Status(self.List_QRdy[self.indexQRdy].get_AIndex()) # checa o status do processo, se terminado é retirado da queue 
+                    if terminado != None: # se o processo terminou
+                        finished.append(terminado) # vai pra lista de terminados
+                    elif consumo_atual == quantum : # se ja consumiu todo o quantum que pode nessa rodada
+                        self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons = 0 # seu quantum consumido zera 
+                        self.List_QRdy[self.indexQRdy].next_index() # e é vez do proximo
+
                     pass
                         
-                pass
+                
    
                 
 

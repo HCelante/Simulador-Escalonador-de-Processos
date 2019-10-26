@@ -1,7 +1,7 @@
 # ESCALONADOR ROUND ROBIN ###############
 ## CLASS RR                     #########
 ### METODOS PARA ATUALIZAR BCP  #########
-
+import src.models.bcp as bcp
 
 class RR: 
     def __init__(self, Qt):
