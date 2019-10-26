@@ -2,6 +2,7 @@
 import sys
 import array as arr
 from src.models.bcp import BCP
+from src.Gerenciador import Manager
 
 def getConfigurations(filename): # pega o tempo de I/O de cada escalonador de um arquivo de configuração 
   scheduler = ""
@@ -65,5 +66,13 @@ def main():
     for i in range (len(procList)):
       mainProcess.append(BCP(procList[i]))
     print(mainProcess[0].procIOTime)
+
+
+    # Recebe o numero de filas
+    nfilas = input("\nEntre com o numerod e filas:")
     
+    # Instanciando a classe Manager
+    Managed = Manager(nfilas)
+    
+    # 
 main()
