@@ -86,21 +86,29 @@ class Manager:                                          # Gerenciador de process
     def exec_loop(self, optscheduler, confs): # fluxo de execucao para os escalonadores
     #optscheduler = tipo do schedule  confs = configuraçoes do escalonadores
         finished = []
+
         # Se Round Robin escolhido
+        ########################
+        ## ROUND ROBIN  ########
+        ########################
         if optscheduler == 'RR' or 'rr':
             self.Timestamp = 0
             qt = confs[0][0]
             RR = RR(qt)
             while True: 
                 # fluxo de execucao do RR
+
+
+                ## ENTRADA DE PROCESSOS
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
                     if(self.Timestamp >= self.QueueNCri.get_atual.procArrivalTime): # se sim, enfilera o novo processo criado
                         self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri[self.QueueNCri.get_AIndex()]) # processo inserido na fila de prontos
 
+                ## EXECUCAO DE PROCESSOS
                 if(len(self.List_QRdy[self.indexQRdy]) > 0):
                     #se tiver o que consumir 
-                    
+
                     # atualiza o tempo de espera nas listas de prontos
                     self.List_QRdy[self.indexQRdy].update_WaitingTime()
                     #consome
@@ -116,8 +124,10 @@ class Manager:                                          # Gerenciador de process
                     elif consumo_atual == qt : # se ja consumiu todo o quantum que pode nessa rodada
                         self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons = 0 # seu quantum consumido zera 
                         self.List_QRdy[self.indexQRdy].next_index() # e é vez do proximo
-
-                    pass
+                
+                ## CONDICAO DE PARADA
+                else: # se nao tiver mais o que consumir
+                    break # quebra o loop  de execucao
                         
                 
    
