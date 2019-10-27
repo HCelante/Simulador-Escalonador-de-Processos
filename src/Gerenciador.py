@@ -110,7 +110,7 @@ class Manager:                                          # Gerenciador de process
                     #se tiver o que consumir 
 
                     # atualiza o tempo de espera nas listas de prontos
-                    self.List_QRdy[self.indexQRdy].update_WaitingTime()
+                    self.List_QRdy[self.indexQRdy].update_WaitingTimeRR()
                     #consome
                     RR.update_BCPQt( self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]) # consome o quantum
                     self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons += 1 #adiciona no quantum consumido
