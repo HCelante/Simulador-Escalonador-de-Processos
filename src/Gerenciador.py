@@ -95,10 +95,15 @@ class Manager:                                          # Gerenciador de process
             self.Timestamp = 0
             qt = confs[0][0]
             RR = RR(qt)
+            qtdProcess = len(self.QueueNCri.sentinel)
             while True: 
                 # fluxo de execucao do RR
 
-
+                ## ENTRADA DE BLOQUEADOS
+                if(len(self.QueueBloq.sentinel) > 0):
+                    for bcpz in self.QueueBloq.sentinel:
+                       # if(self.Timestamp >= bcpz.)
+                        pass
                 ## ENTRADA DE PROCESSOS
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
@@ -125,15 +130,20 @@ class Manager:                                          # Gerenciador de process
                         self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons = 0 # seu quantum consumido zera 
                         self.List_QRdy[self.indexQRdy].next_index() # e é vez do proximo
                 
-                ## CONDICAO DE PARADA
+                ## SE OCIOSO
                 else: # se nao tiver mais o que consumir
-                    break # quebra o loop  de execucao
+                    print("Ocioso...") # quebra o loop  de execucao
+                    if((len(self.QueueBloq.sentinel) == 0) and (len(finished) == qtdProcess)):
+                        print("Resultados")
+                        return 1
+
+                self.Timestamp += 1
                         
                 
    
                 
 
-            pass
+        
 
         # Se Prioridade Dinamica        
         if optscheduler == 'DNMC' or 'dnmc':
