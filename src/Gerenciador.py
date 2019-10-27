@@ -100,11 +100,17 @@ class Manager:                                          # Gerenciador de process
 
                 if(len(self.List_QRdy[self.indexQRdy]) > 0):
                     #se tiver o que consumir 
-                    consumo_atual = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons + 1
+                    
+                    # atualiza o tempo de espera nas listas de prontos
+                    self.List_QRdy[self.indexQRdy].update_WaitingTime()
                     #consome
                     RR.update_BCPQt( self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]) # consome o quantum
                     self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons += 1 #adiciona no quantum consumido
                     terminado = self.List_QRdy[self.indexQRdy].check_Status(self.List_QRdy[self.indexQRdy].get_AIndex()) # checa o status do processo, se terminado é retirado da queue 
+                    
+                    # variavel pra ficar mais legivel
+                    consumo_atual = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons + 1
+                    
                     if terminado != None: # se o processo terminou
                         finished.append(terminado) # vai pra lista de terminados
                     elif consumo_atual == qt : # se ja consumiu todo o quantum que pode nessa rodada
@@ -150,7 +156,7 @@ class Manager:                                          # Gerenciador de process
 
 
     
-
+ 
 
 
     # METODOS DE FEEDBACK ########################################################

@@ -62,3 +62,9 @@ class Queue: # fila circular
             return False
  
    
+    def update_WaitingTime(self): #atualiza o tempo de espera de todos
+    # recebe por parametro o indice do processo em execucao
+        for bcp in range(len(self.sentinel)):
+            if(bcp != self.indexQueue):
+                self.sentinel[bcp].procWaitingTime += 1
+
