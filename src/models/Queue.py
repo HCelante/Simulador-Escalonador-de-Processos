@@ -43,8 +43,19 @@ class Queue: # fila circular
     def get_AIndex(self):
         return self.indexQueue
 
+
     def next_index(self):
-        self.indexQueue = self.indexQueue + 1
+        if(len(self.sentinel) > 0):
+            if ((self.indexQueue + 1) < len(self.sentinel) ):
+                self.indexQueue = self.indexQueue + 1
+            else:
+                self.indexQueue = 0
+            print("processo da vez", self.sentinel[self.indexQueue].procID)
+        else:
+            print("lista vaiza")
+
+        
+        
 
     def pop(self, procBcp):
         return self.sentinel.pop(procBcp)

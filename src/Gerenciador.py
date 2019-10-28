@@ -105,79 +105,88 @@ class Manager:                                          # Gerenciador de process
             self.Timestamp = 0
             qt = confs[0][0]
             RR = rr(qt)
+            qtdProcess = self.numberOfProc
             while True: 
                 # fluxo de execucao do RR
 
-                ## ENTRADA DE BLOQUEADOS
-                if(len(self.QueueBloq.sentinel) > 0):
-                    for bcpindex in range(len(self.QueueBloq.sentinel)):
-                        self.QueueBloq.sentinel[bcpindex].procResponseTime -= 1
+                #BQ1 Entrada de processos bloqueados
+                print("\n\nainda nao criados",len(self.QueueNCri.sentinel)  )
+
+                if(len(self.QueueBloq.sentinel) > 0): # se a fila de bloqueados nao for vazia
+                    for bcpindex in range(len(self.QueueBloq.sentinel)): # checa quais bcps devem ir para a fila de prontos
                         if(0 == self.QueueBloq.sentinel[bcpindex].procResponseTime):
                             self.List_QRdy[0].queueOne(self.QueueBloq.sentinel[bcpindex])
-                        
-                           
-                ## ENTRADA DE PROCESSOS
-                if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
+                            print("\nprocesso ",self.QueueBloq.sentinel[bcpindex].procID, "saiu de bloqueado para pronto")
+            
+                #NC 1 Entrada de processos nao criados
+                #if( len(self.QueueNCri.sentinel) > 0): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
-                    if(self.Timestamp >= self.QueueNCri.get_actual.procArrivalTime): # se sim, enfilera o novo processo criado
-                        self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri[self.QueueNCri.get_AIndex()]) # processo inserido na fila de prontos
+                #    if(self.Timestamp >= self.QueueNCri.sentinel[self.QueueNCri.indexQueue].procArrivalTime): # se sim, enfilera o novo processo criado
+                #        self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.sentinel[self.QueueNCri.indexQueue])
+                #        print("\n",self.QueueNCri.sentinel[self.QueueNCri.indexQueue].procID, "criado")
+                #        self.QueueNCri.sentinel.pop(self.QueueNCri.indexQueue) # apos criar o processo tira ele da fila de nao criados
+                        # assim a cabeça da fila de nao criados ja fica em 0 com o segundo processo da fila
 
-                ## EXECUCAO DE PROCESSOS
-                if(len(self.List_QRdy[self.indexQRdy]) > 0):
-                    #se tiver o que consumir
-                    #  
-                    processo = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]
+                self.criaListaProntos()
+               
+                #EXC 1 Consumo de processos na fila de prontos
+                if(len(self.List_QRdy[self.indexQRdy].sentinel) > 0): # se tem processos na fila de prontos
+                    # eh criada uma variavel para ser usada nas comparacoes, para melhor legibilidade do codigo
+                    processo = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()] # variavel com bcp do processo em execucao
 
-                    # atualiza o tempo de espera nas listas de prontos
-                    self.List_QRdy[self.indexQRdy].update_WaitingTimeRR()
-                    #consome
-                    RR.update_BCPQt( self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]) # consome o quantum
-                    self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons += 1 #adiciona no quantum consumido
+                    # atualiza o tempo de espera de todos nas listas de prontos
+                    # execeto do processo em execucao
+                    self.List_QRdy[self.indexQRdy].update_WaitingTime()
+                    RR.update_BCPQt(processo) # consome o quantum
                     terminado = self.List_QRdy[self.indexQRdy].check_Status(self.List_QRdy[self.indexQRdy].get_AIndex()) # checa o status do processo, se terminado é retirado da queue 
-                    
-                    # variavel pra ficar mais legivel
-                    consumo_atual = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons + 1
+                    print("processo consumido", processo.procID, "\nqt ja consumido",processo.procQtCons,"\n proc state", processo.procState)
+            
                     
                     if terminado != None: # se o processo terminou
                         finished.append(terminado) # vai pra lista de terminados
-
-                    if (processo.procTurnaroundTime in processo.procIOTime): # se tempo de execucao do processo consta em sua lista de IO
-                        processo.procState = -1
-                        self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procState = -1
-                    
-                    # checagem de status apos execucao
-                    if ((terminado == None) and (processo.procState == -1)): # se status bloqueado
-                        processo.procQtCons = 0
-                        processo.procResponseTime = tms         # recebe o contador de tempo de espera
-                        self.QueueBloq.queueOne(processo)       # vai para a fila de bloqueados
-                        self.List_QRdy[self.indexQRdy].sentinel.pop(self.List_QRdy[self.indexQRdy].get_AIndex()) # e eh retirado da fila de prontos
+                        print("\n\nprocesso terminado ",terminado[0].procID)
+                        #self.List_QRdy[self.indexQRdy].sentinel.pop(self.List_QRdy[self.indexQRdy].get_AIndex())
 
 
-                    elif consumo_atual == qt : # se ja consumiu todo o quantum que pode nessa rodada
-                        self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons = 0 # seu quantum consumido zera 
-                        self.List_QRdy[self.indexQRdy].next_index() # e é vez do proximo
+                    else:
+                        if (processo.procCPUuse in processo.procIOTime): # se tempo de execucao do processo consta em sua lista de IO
+                            processo.procState = -1
+                            processo.procResponseTime = tms         # recebe o contador de tempo de espera
+                            print("processo", processo.procID , " bloqueado")
+                            self.QueueBloq.queueOne(processo)       # vai para a fila de bloqueados
+                            self.List_QRdy[self.indexQRdy].sentinel.pop(self.List_QRdy[self.indexQRdy].get_AIndex()) # e eh retirado da fila de prontos
 
-                    
 
+                        elif (processo.procQtCons == qt ):
+                            processo.procQtCons = 0 # seu quantum consumido zera
 
-                ## SE OCIOSO
+                            print("passa a vez")
+                    self.List_QRdy[self.indexQRdy].next_index()
+                
                 else: # se nao tiver mais o que consumir
                     print("Ocioso...") # quebra o loop  de execucao
-                    if((len(self.QueueBloq.sentinel) == 0) and (len(finished) == qtdProcess)):
+                    if(len(finished) == qtdProcess):
                         print("Resultados")
                         return 1
+   
+                #BQ2 Atualizacao do tempo de espera dos processos na fila de bloq
+                if(len(self.QueueBloq.sentinel) > 0): # se a fila de bloqueados nao for vazia
+                    for bcpindex in range(len(self.QueueBloq.sentinel)): # checa quais bcps devem ir para a fila de prontos
+                        self.QueueBloq.sentinel[bcpindex].procResponseTime -= 1
 
+ 
+                
                 self.Timestamp += 1
-                        
+                print("fim ciclo: ",self.Timestamp)
 
 
         # Se Prioridade Dinamica 
-        if optscheduler == 'DNMC' or 'dnmc':
-            DNMC = dnmc(confs[1])
+        #if optscheduler == 'DNMC' or 'dnmc':
+        #    DNMC = dnmc(confs[1])
             # print("Quantum: ", DNMC.getQuantum())
             
-            while(not self.isTheEnd()): # enquanto houver algum processo para ser escalonado
-                self.criaListaProntos() # caso algum processo tenha chegado para execução, insere ele na fila de prontos 
+         #   while(not self.isTheEnd()): # enquanto houver algum processo para ser escalonado
+         #       self.criaListaProntos() # caso algum processo tenha chegado para execução, insere ele na fila de prontos 
                 
 
             #     # fluxo de execucao do DNMC 
@@ -188,9 +197,9 @@ class Manager:                                          # Gerenciador de process
             #             #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
                         
             #             pass
-                    pass
+            #        pass
 
-            pass
+            #pass
 
         
         if optscheduler == 'SJF' or 'sjf':
@@ -203,19 +212,18 @@ class Manager:                                          # Gerenciador de process
             #print(self.QueueNCri.sentinel[2].procArrivalTime)
             while self.Timestamp < 7:
                 # fluxo de execucao do SJF
-                # Percorre a lista de não criados, preenchendo a lista de prontos
-                self.criaListaProntos()
-                # if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)):
-                #     if(self.Timestamp >= self.QueueNCri.sentinel[i].procArrivalTime): # se o timestamp atual for do momento de chegada do processo
-                #         self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.sentinel[i]) # processo inserido na fila de prontos
-                #         # print("TimeStamp: ", self.Timestamp)
-                #         print(self.QueueNCri.sentinel[i].procID)
-                #         i+=1
-                #         self.QueueNCri.indexQueue = i
+                print("filancri ",  self.QueueNCri.sentinel[i].procID)
+                if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
+                    #confere se tem processos para serem criados
+                    if(self.Timestamp >= self.QueueNCri.sentinel[i].procArrivalTime): # se sim, enfilera o novo processo criado
+                        # definir qual criterio para selacao de fila
+                        self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.sentinel[i]) # processo inserido na fila de prontos
+                        print("TimeStamp: ", self.Timestamp)
+                        #print(self.List_QRdy[0].sentinel[i].procArrivalTime)
+                        i+=1
+                        self.QueueNCri.indexQueue = i
 
-                # execução principal
-                if((len(self.QueueFinished) != self.numberOfProc) ): # Se o numero de processos terminados for diferente do numero de processos
-                    print("TimeStamp: ", self.Timestamp)
+                if((len(self.QueueFinished) != self.numberOfProc) ):
                     #print (len(self.List_QRdy[self.indexQRdy].sentinel) > 0 and len(self.QueueFinished) != self.numberOfProc)
                     if (self.List_QRdy[0].sentinel): 
                         index, bt = SJF.selectProc(self.List_QRdy[0]) # retorna o index processo com o menor bt da lista de prontos
@@ -280,9 +288,10 @@ class Manager:                                          # Gerenciador de process
         i = 0
 
         while i < len(self.QueueNCri.sentinel):
-    
+            # print(i)
             if(self.Timestamp >= self.QueueNCri.sentinel[i].procArrivalTime): # se o timestamp atual for do momento de chegada do processo
-                self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.sentinel[i]) # processo inserido na fila de prontos
+                print("\nProcesso criado: ",self.QueueNCri.sentinel[i].procID)
+                self.List_QRdy[0].queueOne(self.QueueNCri.sentinel[i]) # processo inserido na fila de prontos
                 print("TimeStamp: ", self.Timestamp)
                 self.QueueNCri.sentinel.pop(i)
                 i -= 1

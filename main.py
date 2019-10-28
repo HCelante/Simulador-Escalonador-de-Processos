@@ -81,15 +81,22 @@ def main():
     # # Populando a fila de nao criados
     # #Managed.construc_QNC(rrProcess)
     
-    # Managed.reset_Manager(nfilas)
-    # Managed.construc_QNC(sjfProcess)
-    # Managed.exec_loop('SJF', confs)
+    #Managed.reset_Manager(nfilas)
+    #Managed.construc_QNC(sjfProcess)
+    #Managed.exec_loop('SJF', confs)
 
     # Exec DNMC -----------------------
     # Managed.reset_Manager(nfilas)
     nfilas = 1
-    Managed = Manager(nfilas)
-    Managed.construc_QNC(dnmcProcess)
-    Managed.exec_loop('DNMC', confs)
+    #Managed3 = Manager(nfilas)
+    #Managed3.construc_QNC(dnmcProcess)
+    #Managed3.exec_loop('DNMC', confs)
+
+
+    Managed2 = Manager(1)
+    Managed2.construc_QNC(rrProcess)
+    Managed2.exec_loop('RR', confs)
+
+
 
 main()
