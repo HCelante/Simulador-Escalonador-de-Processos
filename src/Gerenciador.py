@@ -11,7 +11,7 @@ import sys
 
 from src.models.bcp import BCP              # BLOCO DE CONTROLE DE PROCESSO
 from src.models.Queue import Queue as Q     # FILA CIRCULAR
-from src.schedulers.Dnmc import *           # PRIORIDADE DINAMICA
+from src.schedulers.Dnmc import DNMC as dnmc           # PRIORIDADE DINAMICA
 from src.schedulers.SJF import SJF as sjf            # JOB SHORTEST FIRST
 from src.schedulers.RR  import RR as rr            # ROUND ROBIN
 
@@ -165,18 +165,23 @@ class Manager:                                          # Gerenciador de process
                         
 
 
-        # Se Prioridade Dinamica        
+        # Se Prioridade Dinamica 
         if optscheduler == 'DNMC' or 'dnmc':
-            while True:
-                # fluxo de execucao do DNMC 
-                if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
-                    #confere se tem processos para serem criados
-                    if(self.Timestamp >= self.QueueNCri.get_actual.procArrivalTime): # se sim, enfilera o novo processo criado
-                        # definir qual criterio para selacao de fila
-                        #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+            DNMC = dnmc(confs[1])
+            # print("Quantum: ", DNMC.getQuantum())
+            
+            
+
+            # while(not DNMC.isTheEnd()): # enquanto houver algum processo para ser escalonado
+            #     # fluxo de execucao do DNMC 
+            #     if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
+            #         #confere se tem processos para serem criados
+            #         if(self.Timestamp >= self.QueueNCri.get_actual.procArrivalTime): # se sim, enfilera o novo processo criado
+            #             # definir qual criterio para selacao de fila
+            #             #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
                         
-                        pass
-                    pass
+            #             pass
+                    # pass
 
             pass
 

@@ -4,7 +4,7 @@ import array as arr
 from src.models.bcp import BCP
 from src.Gerenciador import Manager
 
-def getConfigurations(filename): # pega o tempo de I/O de cada escalonador de um arquivo de configuração 
+def getConfigurations(filename):  # pega o tempo de I/O de cada escalonador de um arquivo de configuração 
   scheduler = ""
   RR = []   # vetor com os valores do processamento de I/O utilizando o algoritmo Round Robin
   DNMC = [] # // utilizando o escalonador com prioridade dinâmica
@@ -45,7 +45,7 @@ def getConfigurations(filename): # pega o tempo de I/O de cada escalonador de um
 
   return [RR,DNMC,SJF]
 
-def getProcess(filename):   #Adiciona os processos a uma lista de processos
+def getProcess(filename):         # Adiciona os processos a uma lista de processos
   processList = []
   singleProcess = []
   
@@ -59,8 +59,8 @@ def getProcess(filename):   #Adiciona os processos a uma lista de processos
   return processList
 
 def main():
-    confs = getConfigurations(sys.argv[1])
-    procList = getProcess(sys.argv[2])
+    confs = getConfigurations(sys.argv[1])  # contém as informações de execução do IO de todos os escalonadores 
+    procList = getProcess(sys.argv[2])      # contém os processos a serem escalonados
     
     mainProcess = []
     for i in range (len(procList)):
@@ -75,14 +75,17 @@ def main():
     # Recebe o numero de filas
     nfilas = 2
     
-    # Instanciando a classe Manager
+    # # Instanciando a classe Manager
     Managed = Manager(nfilas)
     
-    # Populando a fila de nao criados
-    #Managed.construc_QNC(rrProcess)
+    # # Populando a fila de nao criados
+    # #Managed.construc_QNC(rrProcess)
     
-    Managed.reset_Manager(nfilas)
-    Managed.construc_QNC(sjfProcess)
-    Managed.exec_loop('SJF', confs)
+    # Managed.reset_Manager(nfilas)
+    # Managed.construc_QNC(sjfProcess)
+    # Managed.exec_loop('SJF', confs)
+
+    # Exec DNMC -----------------------
+    Managed.exec_loop('DNMC', confs)
 
 main()

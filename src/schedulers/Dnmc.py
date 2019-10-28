@@ -8,12 +8,18 @@ from src.models.Queue import Queue as Q     # FILA CIRCULAR
 from random import randint                  # biblioteca da função randint
 
 class DNMC: 
-  def __init__(self, quantum, IO):
-    self.__A = Q()            # Fila dos processos que não usaram todo o Quantum, prioridade interna do processo
-    self.__B = Q()            # RR, sem prioridades, Quantum fixo, CPU Bound. 
+  def __init__(self, IO):
+    self.__A = Q(False)            # Fila dos processos que não usaram todo o Quantum, prioridade interna do processo
+    self.__B = Q(False)            # RR, sem prioridades, Quantum fixo, CPU Bound. 
     self.__Bloq = Q(True)     # Fila de bloqueados
-    self.__Quantum = quantum  # Quantum RR B()
+    self.__Quantum = 1  # Quantum RR B()
     self.__IO = IO            # IO = [2] com o tempo/interval de IO
+
+  def isTheEnd(self):                         # 1 se não há mais processos para serem escalonados, 0 caso contrário
+    if(self.__A.isEmpty() and self.__B.isEmpty() and self.__Bloq.isEmpty()):
+      return True
+
+    return False
 
   def getFromA(self):                         # insere o processo na fila A
     return self.__A.pop()
