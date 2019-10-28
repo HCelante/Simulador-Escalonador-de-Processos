@@ -15,7 +15,7 @@ class Queue: # fila circular
         if bloqd == True : # se for uma fila de bloqueados
             self.totalTime = 0 # tempo total de espera para os processos nessa fila
         
-    def check_Status_All(self): # cehca o status dos processos e da pop nos terminados e retorna uma lista de terminados
+    def check_Status_All(self): # checa o status dos processos e da pop nos terminados e retorna uma lista de terminados
         terminated = []
         for bcpindex in range(len(self.sentinel)):
             if(self.sentinel[bcpindex].procState == 2): # se processo terminado~
