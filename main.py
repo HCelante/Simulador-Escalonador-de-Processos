@@ -73,21 +73,20 @@ def main():
     dnmcProcess = mainProcess.copy()
     
     # Recebe o numero de filas
-    # nfilas = 2
+    nfilas = 1
     
     # # Instanciando a classe Manager
-    # Managed = Manager(nfilas)
+    Managed = Manager(nfilas)
     
     # # Populando a fila de nao criados
     # #Managed.construc_QNC(rrProcess)
     
-    #Managed.reset_Manager(nfilas)
-    #Managed.construc_QNC(sjfProcess)
-    #Managed.exec_loop('SJF', confs)
+    Managed.reset_Manager(nfilas)
+    Managed.construc_QNC(sjfProcess)
+    Managed.exec_loop('SJF', confs)
 
     # Exec DNMC -----------------------
     # Managed.reset_Manager(nfilas)
-
 
     # Managed2 = Manager(1)
     # Managed2.construc_QNC(rrProcess)

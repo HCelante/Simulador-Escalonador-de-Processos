@@ -13,10 +13,12 @@ class SJF:
   def executeSJF(self, bcp, timestamp): 
 
     for i in range (len(bcp.procIOTime)):
-      if (bcp.procIOTime[i] == timestamp):
-        print("\nBloqueado para IO, durante " + str(self.IOTime) + " unidades de tempo")
+      if (bcp.procIOTime[i] == bcp.procCPUuse):
+        print("\nProcesso "+ str(bcp.procID) +" bloqueado para IO, durante " + str(self.IOTime) + " unidades de tempo\n")
         bcp.timeBlockRemain = self.IOTime
         bcp.procState = -1
+        bcp.procIOTime.pop(i)
+        break
 
     if (bcp.procState == 0 or bcp.procState == 1):
       if (bcp.procBurstTime > 0 ):
@@ -32,7 +34,7 @@ class SJF:
 
   def selectProc (self, ReadyQueue):
     selectedIndex = 0
-    burstTest = ReadyQueue.sentinel[0].procBurstTime
+    burstTest = 999999999
     
     for i in range(len(ReadyQueue.sentinel)):
       if (ReadyQueue.sentinel[i].procBurstTime < burstTest):
