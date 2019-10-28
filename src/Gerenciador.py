@@ -19,12 +19,12 @@ from src.schedulers.RR  import RR as rr            # ROUND ROBIN
 # GERENCIADOR DE PROCESSOS #######################################################
 class Manager:                                          # Gerenciador de processos
     def __init__(self, nfilas):                         # metodo inicializador
-        self.Timestamp      = 0                        # tempo da cpu
-        self.QueueBloq      = Q(True)                  # fila de bloqueados
+        self.Timestamp      = 0                         # tempo da cpu
+        self.QueueBloq      = Q(True)                   # fila de bloqueados
         self.List_QRdy      = self.construc_listQ(nfilas) # lista de fila de prontos
-        self.QueueNCri      = Q(False)                 # fila de processos nao criados
+        self.QueueNCri      = Q(False)                  # fila de processos nao criados
         self.indexQRdy      = 0
-        self.init_tms       = []                       # lista de tempos de entrada de processos
+        self.init_tms       = []                        # lista de tempos de entrada de processos
         self.QueueFinished  = []                        # fila de processos terminados
         self.numberOfProc   = 0                         # numero total de processos
         
@@ -83,8 +83,8 @@ class Manager:                                          # Gerenciador de process
 
 
     # METODOS DE GERENCIA ########################################################
-    def updateQ_Priority(self, cond):                      # consome os processos
-        if ("AB" == cond):                               # consome primeiro a e debois b
+    def updateQ_Priority(self, cond):                       # consome os processos
+        if ("AB" == cond):                                  # consome primeiro a e debois b
             if(self.List_QRdy[self.indexQRdy].isEmpty() == True):
                 self.indexQRdy = self.indexQRdy + 1
 
