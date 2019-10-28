@@ -12,34 +12,38 @@ import sys
 from src.models.bcp import BCP              # BLOCO DE CONTROLE DE PROCESSO
 from src.models.Queue import Queue as Q     # FILA CIRCULAR
 from src.schedulers.Dnmc import *           # PRIORIDADE DINAMICA
-from src.schedulers.SJF import *            # JOB SHORTEST FIRST
-from src.schedulers.RR  import *            # ROUND ROBIN
+from src.schedulers.SJF import SJF as sjf            # JOB SHORTEST FIRST
+from src.schedulers.RR  import RR as rr            # ROUND ROBIN
 
 
 # GERENCIADOR DE PROCESSOS #######################################################
 class Manager:                                          # Gerenciador de processos
     def __init__(self, nfilas):                         # metodo inicializador
-        self.Timestamp       = 0                        # tempo da cpu
-        self.QueueBloq       = Q(True)                  # fila de bloqueados
-        self.List_QRdy       = self.construc_listQ(nfilas) # lista de fila de prontos
-        self.QueueNCri       = Q(False)                 # fila de processos nao criados
-        self.indexQRdy       = 0
-        self.init_tms        = []                       # lista de tempos de entrada de processos
-
+        self.Timestamp      = 0                        # tempo da cpu
+        self.QueueBloq      = Q(True)                  # fila de bloqueados
+        self.List_QRdy      = self.construc_listQ(nfilas) # lista de fila de prontos
+        self.QueueNCri      = Q(False)                 # fila de processos nao criados
+        self.indexQRdy      = 0
+        self.init_tms       = []                       # lista de tempos de entrada de processos
+        self.QueueFinished  = []                        # fila de processos terminados
+        self.numberOfProc   = 0                         # numero total de processos
+        
     # método de reset do gerenciador
     def reset_Manager(self, nfilas):
-        self.Timestamp       = 0
-        self.QueueBloq       = Q(True)
-        self.List_QRdy       = self.construc_listQ(nfilas)
-        self.QueueNCri       = Q(False)
-        self.indexQRdy       = 0
-        self.init_tms        = []
+        self.Timestamp      = 0
+        self.QueueBloq      = Q(True)
+        self.List_QRdy      = self.construc_listQ(nfilas)
+        self.QueueNCri      = Q(False)
+        self.indexQRdy      = 0
+        self.init_tms       = []
+        self.QueueFinished  = []
+        self.numberOfProc   = 0 
         
     # METODOS DE CONSTRUCAO ######################################################
     def construc_listQ(self, nfilas):
         listqrd = []
         for n in range(int(nfilas)):
-            print("\nfila: ", n, "criada")
+            #print("\nfila: ", n, "criada")
             listqrd.append(Q(False))
         return listqrd
 
@@ -57,19 +61,21 @@ class Manager:                                          # Gerenciador de process
         #    listaBCPOrd.append([tmm]) 
         # ordenado os processos por tempo de entrada    
 
-        #print(listaBCPOrd)
-        for bcp in listadeBCPS:
-            for init in self.init_tms:
+        print(self.init_tms)
+        for init in self.init_tms:
+            for bcp in listadeBCPS:
                 if(init == bcp.procArrivalTime):
+                    print ("teste ", bcp.procID, bcp.procArrivalTime)
                     listaBCPOrd.append(bcp)
         #print(listaBCPOrd[0].procArrivalTime)
         # coloca os processos na fila criada
-        for processo in listadeBCPS:   
-            #print(type(processo))                                     
+        print (listaBCPOrd[0].procID)
+        for processo in listaBCPOrd:                                   
             QueueNC.queueOne(processo)
         #print(QueueNC)
         print("\n Numero de processos enfileirados na de Nao Criados: ",len(listadeBCPS))
 
+        self.numberOfProc = len(listadeBCPS)
         self.QueueNCri = QueueNC                                        # retorna para a fila de nao criados
 
 
@@ -95,8 +101,12 @@ class Manager:                                          # Gerenciador de process
             tms = 2
             self.Timestamp = 0
             qt = confs[0][0]
+<<<<<<< Updated upstream
             RR = RR(qt)
             qtdProcess = len(self.QueueNCri.sentinel)
+=======
+            RR = rr(qt)
+>>>>>>> Stashed changes
             while True: 
                 # fluxo de execucao do RR
 
@@ -183,17 +193,73 @@ class Manager:                                          # Gerenciador de process
             pass
         
         if optscheduler == 'SJF' or 'sjf':
+            
+            self.Timestamp = 0
+            SJF = sjf(confs[2])
+            i = 0
+            j = 0
+
+            #print(self.QueueNCri.sentinel[2].procArrivalTime)
             while True:
                 # fluxo de execucao do SJF
+                print("filancri ",  self.QueueNCri.sentinel[i].procID)
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
+<<<<<<< Updated upstream
                     if(self.Timestamp >= self.QueueNCri.get_actual.procArrivalTime): # se sim, enfilera o novo processo criado
+=======
+                    if(self.Timestamp >= self.QueueNCri.sentinel[i].procArrivalTime): # se sim, enfilera o novo processo criado
+>>>>>>> Stashed changes
                         # definir qual criterio para selacao de fila
-                        #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+                        self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.sentinel[i]) # processo inserido na fila de prontos
+                        print("TimeStamp: ", self.Timestamp)
+                        #print(self.List_QRdy[0].sentinel[i].procArrivalTime)
+                        i+=1
+                        self.QueueNCri.indexQueue = i
 
-                        pass
-                    pass
-            pass
+                if((len(self.QueueFinished) != self.numberOfProc) ):
+                    #print (len(self.List_QRdy[self.indexQRdy].sentinel) > 0 and len(self.QueueFinished) != self.numberOfProc)
+                    if (len(self.List_QRdy[self.indexQRdy].sentinel) > 0):
+                       
+                        index = SJF.selectProc(self.List_QRdy[0])
+                        executingProc = self.List_QRdy[0].sentinel[index]
+                        self.List_QRdy[0].sentinel.pop(index)
+
+                        if (executingProc):
+                            print (executingProc)
+                            print(executingProc.procID, executingProc.procIOTime, executingProc.procState, executingProc.procBurstTime)
+
+                            if ((executingProc.procState == 0) or (executingProc.procState == 1)):
+                                executingProc = SJF.executeSJF(executingProc, self.Timestamp)
+                            elif (executingProc.procState == -1):
+                                self.QueueBloq.sentinel.append(executingProc)
+                                executingProc = []
+                                # print (executingProc)
+                                #print("aqui1")
+                                # print (self.QueueBloq.sentinel)
+                                # print (self.QueueBloq.sentinel[0].timeBlockRemain)
+                            elif(executingProc.procState == 2):
+                                self.QueueFinished.append(executingProc)
+                                executingProc = []
+                    
+                    if (len(self.QueueBloq.sentinel) > 0):    
+                        for i in range (len(self.QueueBloq.sentinel)):
+                            if ((self.QueueBloq.sentinel[i] != None ) and (self.QueueBloq.sentinel[i].timeBlockRemain == 0)):
+                                self.QueueBloq.sentinel[i].procState = 0
+                                self.List_QRdy[0].sentinel.append(self.QueueBloq.sentinel[i])
+                                print("Tirei o processo " + str(self.QueueBloq.sentinel[i].procID) + " da fila de bloqueados, pelo tempo de bloqueio estar com " + str(self.QueueBloq.sentinel[i].timeBlockRemain) + " unidades de tempo")
+                                print(self.List_QRdy[0].sentinel[0].procIOTime)
+                                self.QueueBloq.sentinel.pop(i)
+                                # print (self.QueueBloq.sentinel)
+                            else:
+                                print ("Falta " + str(self.QueueBloq.sentinel[i].timeBlockRemain) + " unidades para desbloquear o processo " + str(self.QueueBloq.sentinel[i].procID))
+                                self.QueueBloq.sentinel[i].timeBlockRemain -= 1      
+
+                else:
+                    break
+                self.Timestamp += 1
+
+            # print(len(self.List_QRdy[0].sentinel))
 
 
 

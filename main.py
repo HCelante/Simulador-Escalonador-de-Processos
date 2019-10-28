@@ -81,9 +81,8 @@ def main():
     # Populando a fila de nao criados
     #Managed.construc_QNC(rrProcess)
     
-    print(confs)
     Managed.reset_Manager(nfilas)
-    #Managed.construc_QNC(sjfProcess)
-    #Managed.exec_loop('SJF', confs)
+    Managed.construc_QNC(sjfProcess)
+    Managed.exec_loop('SJF', confs)
 
 main()

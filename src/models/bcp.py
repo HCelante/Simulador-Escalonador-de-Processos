@@ -21,11 +21,13 @@ class BCP: # Bloco de Controle de processos
         self.procTurnaroundTime = 0         # tempo total de execução do processo
         self.procWaitingTime = 0            # tempo de espera do processo na fila de pronto
         self.procCPUuse = 0                 # tempo gasto da cpu
+        self.timeBlockRemain = 0            # tempo restante de bloqueio
         
         # self.schedParam = context[2]    # parametros do schelude
         # self.procParent = context[3]    # id do processo pai
         # self.procGroup = context[5]     # grupo do processo
- 
+    
+
     # def set_procCPUuse(self, use):
     #     if type(use) == int:
     #         self.procTurnaroundTime +=  use #nao é isso
