@@ -86,12 +86,13 @@ class Manager:                                          # Gerenciador de process
     def exec_loop(self, optscheduler, confs): # fluxo de execucao para os escalonadores
     #optscheduler = tipo do schedule  confs = configuraçoes do escalonadores
         finished = []
-
+        
         # Se Round Robin escolhido
         ########################
         ## ROUND ROBIN  ########
         ########################
         if optscheduler == 'RR' or 'rr':
+            tms = 2
             self.Timestamp = 0
             qt = confs[0][0]
             RR = RR(qt)
@@ -101,9 +102,12 @@ class Manager:                                          # Gerenciador de process
 
                 ## ENTRADA DE BLOQUEADOS
                 if(len(self.QueueBloq.sentinel) > 0):
-                    for bcpz in self.QueueBloq.sentinel:
-                       # if(self.Timestamp >= bcpz.)
-                        pass
+                    for bcpindex in range(len(self.QueueBloq.sentinel)):
+                        self.QueueBloq.sentinel[bcpindex].procResponseTime -= 1
+                        if(0 == self.QueueBloq.sentinel[bcpindex].procResponseTime):
+                            self.List_QRdy[0].queueOne(self.QueueBloq.sentinel[bcpindex])
+                        
+                           
                 ## ENTRADA DE PROCESSOS
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
@@ -112,7 +116,9 @@ class Manager:                                          # Gerenciador de process
 
                 ## EXECUCAO DE PROCESSOS
                 if(len(self.List_QRdy[self.indexQRdy]) > 0):
-                    #se tiver o que consumir 
+                    #se tiver o que consumir
+                    #  
+                    processo = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]
 
                     # atualiza o tempo de espera nas listas de prontos
                     self.List_QRdy[self.indexQRdy].update_WaitingTimeRR()
@@ -126,10 +132,26 @@ class Manager:                                          # Gerenciador de process
                     
                     if terminado != None: # se o processo terminou
                         finished.append(terminado) # vai pra lista de terminados
+
+                    if (processo.procTurnaroundTime in processo.procIOTime): # se tempo de execucao do processo consta em sua lista de IO
+                        processo.procState = -1
+                        self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procState = -1
+                    
+                    # checagem de status apos execucao
+                    if ((terminado == None) and (processo.procState == -1)): # se status bloqueado
+                        processo.procQtCons = 0
+                        processo.procResponseTime = tms         # recebe o contador de tempo de espera
+                        self.QueueBloq.queueOne(processo)       # vai para a fila de bloqueados
+                        self.List_QRdy[self.indexQRdy].sentinel.pop(self.List_QRdy[self.indexQRdy].get_AIndex()) # e eh retirado da fila de prontos
+
+
                     elif consumo_atual == qt : # se ja consumiu todo o quantum que pode nessa rodada
                         self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons = 0 # seu quantum consumido zera 
                         self.List_QRdy[self.indexQRdy].next_index() # e é vez do proximo
-                
+
+                    
+
+
                 ## SE OCIOSO
                 else: # se nao tiver mais o que consumir
                     print("Ocioso...") # quebra o loop  de execucao
