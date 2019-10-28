@@ -14,13 +14,13 @@ class SJF:
 
     for i in range (len(bcp.procIOTime)):
       if (bcp.procIOTime[i] == timestamp):
-        print("Bloqueado para IO, durante " + str(self.IOTime) + " unidades de tempo")
-        bcp.timeBlockRemain = self.IOTime - 1
+        print("\nBloqueado para IO, durante " + str(self.IOTime) + " unidades de tempo")
+        bcp.timeBlockRemain = self.IOTime
         bcp.procState = -1
 
     if (bcp.procState == 0 or bcp.procState == 1):
       if (bcp.procBurstTime > 0 ):
-        print ("entrei")
+        # print ("entrei")
         bcp.procState = 1
         bcp.procBurstTime -= 1
         bcp.procCompletionTime = timestamp
@@ -39,7 +39,7 @@ class SJF:
         burstTest = ReadyQueue.sentinel[i].procBurstTime
         selectedIndex = i
         
-    return selectedIndex
+    return selectedIndex, burstTest
   
   def randomIOTime(self):
     value = randrange(self.minIOTime, self.maxIOTime)
