@@ -87,16 +87,15 @@ def main():
 
     # Exec DNMC -----------------------
     # Managed.reset_Manager(nfilas)
-    nfilas = 1
-    #Managed3 = Manager(nfilas)
-    #Managed3.construc_QNC(dnmcProcess)
-    #Managed3.exec_loop('DNMC', confs)
 
 
-    Managed2 = Manager(1)
-    Managed2.construc_QNC(rrProcess)
-    Managed2.exec_loop('RR', confs)
+    # Managed2 = Manager(1)
+    # Managed2.construc_QNC(rrProcess)
+    # Managed2.exec_loop('RR', confs)
 
+    Managed3 = Manager(2)
+    Managed3.construc_QNC(dnmcProcess)
+    Managed3.exec_loop('DNMC', confs)
 
 
 main()

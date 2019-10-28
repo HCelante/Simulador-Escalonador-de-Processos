@@ -15,11 +15,11 @@ class DNMC:
     self.__Quantum = 1  # Quantum RR B()
     self.__IO = IO            # IO = [2] com o tempo/interval de IO
 
-  def isTheEnd(self):                         # 1 se não há mais processos para serem escalonados, 0 caso contrário
-    if(self.__A.isEmpty() and self.__B.isEmpty() and self.__Bloq.isEmpty()):
-      return True
+  # def isTheEnd(self):                         # 1 se não há mais processos para serem escalonados, 0 caso contrário
+  #   if(self.__A.isEmpty() and self.__B.isEmpty() and self.__Bloq.isEmpty()):
+  #     return True
 
-    return False
+  #   return False
 
   # def getFromA(self):                         # insere o processo na fila A
   #   return self.__A.pop()
@@ -51,3 +51,5 @@ class DNMC:
   def changePriority(self, proc) :            # Calcula e atualiza a prioridade do processo com base no quantum consumido
     proc.procPriority = proc.procQtCons/100
 
+  # def ordByPriority(self):
+  #   pass

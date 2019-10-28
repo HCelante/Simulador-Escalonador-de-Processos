@@ -34,7 +34,7 @@ class Queue: # fila circular
             return None
 
 
-    def queueOne(self, procbcp): # recebe o bloco de controle de processo referente ao processo à ser infileirado
+    def queueOne(self, procbcp): # recebe o bloco de controle de processo referente ao processo à ser enfileirado
         return self.sentinel.append(procbcp)
 
     def get_actual(self): # retorna o atual processos da fila sem incrementar o index
