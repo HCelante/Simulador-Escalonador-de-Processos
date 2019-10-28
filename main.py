@@ -92,9 +92,9 @@ def main():
     # Managed2.construc_QNC(rrProcess)
     # Managed2.exec_loop('RR', confs)
 
-    Managed3 = Manager(2)
-    Managed3.construc_QNC(dnmcProcess)
-    Managed3.exec_loop('DNMC', confs)
+    # Managed3 = Manager(2)
+    # Managed3.construc_QNC(dnmcProcess)
+    # Managed3.exec_loop('DNMC', confs)
 
 
 main()

@@ -117,8 +117,7 @@ class Manager:                                          # Gerenciador de process
         #######################
         # ROUND ROBIN  ########
         #######################
-<<<<<<< HEAD
-        if optscheduler == 'RR' or 'rr':
+        if optscheduler == ('RR' or 'rr'):
             pass
             # tms = 2
             # self.Timestamp = 0
@@ -136,25 +135,6 @@ class Manager:                                          # Gerenciador de process
             #             if(0 == self.QueueBloq.sentinel[bcpindex].procResponseTime):
             #                 self.List_QRdy[0].queueOne(self.QueueBloq.sentinel[bcpindex])
             #                 print("\nprocesso ",self.QueueBloq.sentinel[bcpindex].procID, "saiu de bloqueado para pronto")
-=======
-        if optscheduler == ('RR' or 'rr'):
-            tms = 2
-            self.Timestamp = 0
-            qt = confs[0][0]
-            RR = rr(qt)
-            qtdProcess = self.numberOfProc
-            while True: 
-                # fluxo de execucao do RR
-
-                #BQ1 Entrada de processos bloqueados
-                print("\n\nainda nao criados",len(self.QueueNCri.sentinel)  )
-
-                if(len(self.QueueBloq.sentinel) > 0): # se a fila de bloqueados nao for vazia
-                    for bcpindex in range(len(self.QueueBloq.sentinel)): # checa quais bcps devem ir para a fila de prontos
-                        if(0 == self.QueueBloq.sentinel[bcpindex].procResponseTime):
-                            self.List_QRdy[0].queueOne(self.QueueBloq.sentinel[bcpindex])
-                            print("\nprocesso ",self.QueueBloq.sentinel[bcpindex].procID, "saiu de bloqueado para pronto")
->>>>>>> 547dd416477efa97f5ddac2debe31b015fb04208
             
             #     #NC 1 Entrada de processos nao criados
             #     #if( len(self.QueueNCri.sentinel) > 0): # se a lista de nao criados nao terminou de ser percorrida
@@ -218,7 +198,7 @@ class Manager:                                          # Gerenciador de process
             #     print("fim ciclo: ",self.Timestamp)
 
         # Se Prioridade Dinamica 
-        if optscheduler == 'DNMC' or 'dnmc':
+        if optscheduler == ('DNMC' or 'dnmc'):
             DNMC = dnmc(confs[1])
             procDaVez = None
             bloqOut = 0
@@ -281,90 +261,7 @@ class Manager:                                          # Gerenciador de process
 
                 self.Timestamp += 1
         
-<<<<<<< HEAD
-        if optscheduler == 'SJF' or 'sjf':
-            pass
-            # self.Timestamp = 0
-            # SJF = sjf(confs[2])
-            # i = 0
-            # j = 0
-            # executingProc = None
-            # #print(self.QueueNCri.sentinel[2].procArrivalTime)
-            # while self.Timestamp < 7:
-            #     # fluxo de execucao do SJF
-            #     print("filancri ",  self.QueueNCri.sentinel[i].procID)
-            #     if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
-            #         #confere se tem processos para serem criados
-            #         if(self.Timestamp >= self.QueueNCri.sentinel[i].procArrivalTime): # se sim, enfilera o novo processo criado
-            #             # definir qual criterio para selacao de fila
-            #             self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.sentinel[i]) # processo inserido na fila de prontos
-            #             print("TimeStamp: ", self.Timestamp)
-            #             #print(self.List_QRdy[0].sentinel[i].procArrivalTime)
-            #             i+=1
-            #             self.QueueNCri.indexQueue = i
-
-            #     if((len(self.QueueFinished) != self.numberOfProc) ):
-            #         #print (len(self.List_QRdy[self.indexQRdy].sentinel) > 0 and len(self.QueueFinished) != self.numberOfProc)
-            #         if (self.List_QRdy[0].sentinel): 
-            #             index, bt = SJF.selectProc(self.List_QRdy[0]) # retorna o index processo com o menor bt da lista de prontos
-
-            #         if (((len(self.List_QRdy[self.indexQRdy].sentinel) > 0) and (not executingProc)) or (executingProc.procBurstTime > bt) ): 
-            #         #compara se há algo na lista de prontos e não há processo executando, ou se o processo atual tiver um bt restante maior que o selecionado da lista de prontos
-                        
-            #             if((executingProc) and (executingProc.procBurstTime > bt)):
-            #                 self.List_QRdy[0].sentinel.append(executingProc)
-            #             # print ("entreiaqui")
-            #             if (self.List_QRdy[0].sentinel):
-            #                 index, bt = SJF.selectProc(self.List_QRdy[0])
-            #             executingProc = self.List_QRdy[0].sentinel[index]
-            #             self.List_QRdy[0].sentinel.pop(index)
-
-            #         if (executingProc):
-            #                 # print (executingProc)
-            #                 print("ID: ", executingProc.procID, "\tFIO: ", executingProc.procIOTime, "\tSTATE: ",executingProc.procState, "\tBT: ",executingProc.procBurstTime)
-
-            #                 if ((executingProc.procState == 0) or (executingProc.procState == 1)):
-            #                     executingProc = SJF.executeSJF(executingProc, self.Timestamp)
-                            
-            #                 if (executingProc.procState == -1):
-            #                     self.QueueBloq.sentinel.append(executingProc)
-            #                     executingProc = []
-            #                     # print (executingProc)
-            #                     #print("aqui1")
-            #                     # print (self.QueueBloq.sentinel)
-            #                     # print (self.QueueBloq.sentinel[0].timeBlockRemain)
-                            
-            #                 elif(executingProc.procState == 2):
-            #                     self.QueueFinished.append(executingProc)
-            #                     executingProc = []
-                    
-            #         if (len(self.QueueBloq.sentinel) > 0):    
-            #             for i in range (len(self.QueueBloq.sentinel)):
-            #                 if (self.QueueBloq.sentinel != None ):
-            #                     if (self.QueueBloq.sentinel[i].timeBlockRemain == 0):
-            #                         self.QueueBloq.sentinel[i].procState = 0
-            #                         self.List_QRdy[0].sentinel.append(self.QueueBloq.sentinel[i])
-            #                         print("\nTirei o processo " + str(self.QueueBloq.sentinel[i].procID) + " da fila de bloqueados, pelo tempo de bloqueio estar com " + str(self.QueueBloq.sentinel[i].timeBlockRemain) + " unidades de tempo")
-            #                         # print(self.List_QRdy[0].sentinel[0].procIOTime)
-            #                         self.QueueBloq.sentinel.pop(i)
-            #                         # print (self.QueueBloq.sentinel)
-            #                     else:
-            #                         print ("Falta " + str(self.QueueBloq.sentinel[i].timeBlockRemain) + " unidades para desbloquear o processo " + str(self.QueueBloq.sentinel[i].procID))
-            #                         self.QueueBloq.sentinel[i].timeBlockRemain -= 1      
-
-            #     else:
-            #         break
-            
-            #     self.Timestamp += 1
-                
-
-            # print(len(self.List_QRdy[0].sentinel))
-
-
-    
- 
-=======
-        elif optscheduler == ('SJF' or 'sjf'):
+        if optscheduler == ('SJF' or 'sjf'):
             self.Timestamp = 0
             SJF = sjf(confs[2])
             blockIndex = 0
@@ -468,19 +365,13 @@ class Manager:                                          # Gerenciador de process
             # print(len(self.List_QRdy[0].sentinel))
 
 
->>>>>>> 547dd416477efa97f5ddac2debe31b015fb04208
     def criaListaProntos(self):         # gera lista de pronto por ordem de chegada
         i = 0
 
         while i < len(self.QueueNCri.sentinel):
     
             if(self.Timestamp >= self.QueueNCri.sentinel[i].procArrivalTime): # se o timestamp atual for do momento de chegada do processo
-<<<<<<< HEAD
-                # print("\nProcesso criado: ",self.QueueNCri.sentinel[i].procID)
-                self.List_QRdy[0].queueOne(self.QueueNCri.sentinel[i]) # processo inserido na fila de prontos
-=======
                 self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.sentinel[i]) # processo inserido na fila de prontos
->>>>>>> 547dd416477efa97f5ddac2debe31b015fb04208
                 # print("TimeStamp: ", self.Timestamp)
                 self.QueueNCri.sentinel.pop(i)
                 i -= 1
