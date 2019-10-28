@@ -98,79 +98,74 @@ class Manager:                                          # Gerenciador de process
         ## ROUND ROBIN  ########
         ########################
         if optscheduler == 'RR' or 'rr':
-            tms = 2
-            self.Timestamp = 0
-            qt = confs[0][0]
-<<<<<<< Updated upstream
-            RR = RR(qt)
-            qtdProcess = len(self.QueueNCri.sentinel)
-=======
-            RR = rr(qt)
->>>>>>> Stashed changes
-            while True: 
-                # fluxo de execucao do RR
+            # tms = 2
+            # self.Timestamp = 0
+            # qt = confs[0][0]
+            # RR = rr(qt)
+            # while True: 
+            #     # fluxo de execucao do RR
 
-                ## ENTRADA DE BLOQUEADOS
-                if(len(self.QueueBloq.sentinel) > 0):
-                    for bcpindex in range(len(self.QueueBloq.sentinel)):
-                        self.QueueBloq.sentinel[bcpindex].procResponseTime -= 1
-                        if(0 == self.QueueBloq.sentinel[bcpindex].procResponseTime):
-                            self.List_QRdy[0].queueOne(self.QueueBloq.sentinel[bcpindex])
+            #     ## ENTRADA DE BLOQUEADOS
+            #     if(len(self.QueueBloq.sentinel) > 0):
+            #         for bcpindex in range(len(self.QueueBloq.sentinel)):
+            #             self.QueueBloq.sentinel[bcpindex].procResponseTime -= 1
+            #             if(0 == self.QueueBloq.sentinel[bcpindex].procResponseTime):
+            #                 self.List_QRdy[0].queueOne(self.QueueBloq.sentinel[bcpindex])
                         
                            
-                ## ENTRADA DE PROCESSOS
-                if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
-                    #confere se tem processos para serem criados
-                    if(self.Timestamp >= self.QueueNCri.get_actual.procArrivalTime): # se sim, enfilera o novo processo criado
-                        self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri[self.QueueNCri.get_AIndex()]) # processo inserido na fila de prontos
+            #     ## ENTRADA DE PROCESSOS
+            #     if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
+            #         #confere se tem processos para serem criados
+            #         if(self.Timestamp >= self.QueueNCri.get_actual.procArrivalTime): # se sim, enfilera o novo processo criado
+            #             self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri[self.QueueNCri.get_AIndex()]) # processo inserido na fila de prontos
 
-                ## EXECUCAO DE PROCESSOS
-                if(len(self.List_QRdy[self.indexQRdy]) > 0):
-                    #se tiver o que consumir
-                    #  
-                    processo = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]
+            #     ## EXECUCAO DE PROCESSOS
+            #     if(len(self.List_QRdy[self.indexQRdy]) > 0):
+            #         #se tiver o que consumir
+            #         #  
+            #         processo = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]
 
-                    # atualiza o tempo de espera nas listas de prontos
-                    self.List_QRdy[self.indexQRdy].update_WaitingTimeRR()
-                    #consome
-                    RR.update_BCPQt( self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]) # consome o quantum
-                    self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons += 1 #adiciona no quantum consumido
-                    terminado = self.List_QRdy[self.indexQRdy].check_Status(self.List_QRdy[self.indexQRdy].get_AIndex()) # checa o status do processo, se terminado é retirado da queue 
+            #         # atualiza o tempo de espera nas listas de prontos
+            #         self.List_QRdy[self.indexQRdy].update_WaitingTimeRR()
+            #         #consome
+            #         RR.update_BCPQt( self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()]) # consome o quantum
+            #         self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons += 1 #adiciona no quantum consumido
+            #         terminado = self.List_QRdy[self.indexQRdy].check_Status(self.List_QRdy[self.indexQRdy].get_AIndex()) # checa o status do processo, se terminado é retirado da queue 
                     
-                    # variavel pra ficar mais legivel
-                    consumo_atual = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons + 1
+            #         # variavel pra ficar mais legivel
+            #         consumo_atual = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons + 1
                     
-                    if terminado != None: # se o processo terminou
-                        finished.append(terminado) # vai pra lista de terminados
+            #         if terminado != None: # se o processo terminou
+            #             finished.append(terminado) # vai pra lista de terminados
 
-                    if (processo.procTurnaroundTime in processo.procIOTime): # se tempo de execucao do processo consta em sua lista de IO
-                        processo.procState = -1
-                        self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procState = -1
+            #         if (processo.procTurnaroundTime in processo.procIOTime): # se tempo de execucao do processo consta em sua lista de IO
+            #             processo.procState = -1
+            #             self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procState = -1
                     
-                    # checagem de status apos execucao
-                    if ((terminado == None) and (processo.procState == -1)): # se status bloqueado
-                        processo.procQtCons = 0
-                        processo.procResponseTime = tms         # recebe o contador de tempo de espera
-                        self.QueueBloq.queueOne(processo)       # vai para a fila de bloqueados
-                        self.List_QRdy[self.indexQRdy].sentinel.pop(self.List_QRdy[self.indexQRdy].get_AIndex()) # e eh retirado da fila de prontos
+            #         # checagem de status apos execucao
+            #         if ((terminado == None) and (processo.procState == -1)): # se status bloqueado
+            #             processo.procQtCons = 0
+            #             processo.procResponseTime = tms         # recebe o contador de tempo de espera
+            #             self.QueueBloq.queueOne(processo)       # vai para a fila de bloqueados
+            #             self.List_QRdy[self.indexQRdy].sentinel.pop(self.List_QRdy[self.indexQRdy].get_AIndex()) # e eh retirado da fila de prontos
 
 
-                    elif consumo_atual == qt : # se ja consumiu todo o quantum que pode nessa rodada
-                        self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons = 0 # seu quantum consumido zera 
-                        self.List_QRdy[self.indexQRdy].next_index() # e é vez do proximo
+            #         elif consumo_atual == qt : # se ja consumiu todo o quantum que pode nessa rodada
+            #             self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()].procQtCons = 0 # seu quantum consumido zera 
+            #             self.List_QRdy[self.indexQRdy].next_index() # e é vez do proximo
 
                     
 
 
-                ## SE OCIOSO
-                else: # se nao tiver mais o que consumir
-                    print("Ocioso...") # quebra o loop  de execucao
-                    if((len(self.QueueBloq.sentinel) == 0) and (len(finished) == qtdProcess)):
-                        print("Resultados")
-                        return 1
+            #     ## SE OCIOSO
+            #     else: # se nao tiver mais o que consumir
+            #         print("Ocioso...") # quebra o loop  de execucao
+            #         if((len(self.QueueBloq.sentinel) == 0) and (len(finished) == qtdProcess)):
+            #             print("Resultados")
+            #             return 1
 
-                self.Timestamp += 1
-                        
+            #     self.Timestamp += 1
+            pass                
                 
    
                 
@@ -179,16 +174,16 @@ class Manager:                                          # Gerenciador de process
 
         # Se Prioridade Dinamica        
         if optscheduler == 'DNMC' or 'dnmc':
-            while True:
-                # fluxo de execucao do DNMC 
-                if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
-                    #confere se tem processos para serem criados
-                    if(self.Timestamp >= self.QueueNCri.get_actual.procArrivalTime): # se sim, enfilera o novo processo criado
-                        # definir qual criterio para selacao de fila
-                        #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
+            # while True:
+            #     # fluxo de execucao do DNMC 
+            #     if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
+            #         #confere se tem processos para serem criados
+            #         if(self.Timestamp >= self.QueueNCri.get_actual.procArrivalTime): # se sim, enfilera o novo processo criado
+            #             # definir qual criterio para selacao de fila
+            #             #self.List_QRdy.queueOne(self.QueueNCri.get_proximo()) # processo inserido na fila de prontos
                         
-                        pass
-                    pass
+            #             pass
+            #         pass
 
             pass
         
@@ -205,11 +200,7 @@ class Manager:                                          # Gerenciador de process
                 print("filancri ",  self.QueueNCri.sentinel[i].procID)
                 if(self.QueueNCri.indexQueue < len(self.QueueNCri.sentinel)): # se a lista de nao criados nao terminou de ser percorrida
                     #confere se tem processos para serem criados
-<<<<<<< Updated upstream
-                    if(self.Timestamp >= self.QueueNCri.get_actual.procArrivalTime): # se sim, enfilera o novo processo criado
-=======
                     if(self.Timestamp >= self.QueueNCri.sentinel[i].procArrivalTime): # se sim, enfilera o novo processo criado
->>>>>>> Stashed changes
                         # definir qual criterio para selacao de fila
                         self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.sentinel[i]) # processo inserido na fila de prontos
                         print("TimeStamp: ", self.Timestamp)
