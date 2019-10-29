@@ -41,7 +41,11 @@ class Queue: # fila circular
         return self.sentinel[self.indexQueue]
 
     def get_AIndex(self):
-        return self.indexQueue
+        if(self.indexQueue  > (len(self.sentinel) -1)):
+            self.indexQueue =  0
+            return self.indexQueue
+        else:
+            return self.indexQueue
 
 
     def next_index(self):

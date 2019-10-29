@@ -14,7 +14,7 @@ from src.models.Queue import Queue as Q     # FILA CIRCULAR
 from src.schedulers.Dnmc import DNMC as dnmc           # PRIORIDADE DINAMICA
 from src.schedulers.SJF import SJF as sjf            # JOB SHORTEST FIRST
 from src.schedulers.RR  import RR as rr            # ROUND ROBIN
-
+from src.models.plotting import Gantt
 
 # GERENCIADOR DE PROCESSOS #######################################################
 class Manager:                                          # Gerenciador de processos
@@ -135,7 +135,7 @@ class Manager:                                          # Gerenciador de process
 
 
     def exec_loop(self, optscheduler, confs): # fluxo de execucao para os escalonadores
-    #optscheduler = tipo do schedule  confs = configuraçoes do escalonadores
+       #optscheduler = tipo do schedule  confs = configuraçoes do escalonadores
         finished = []
         
         # Se Round Robin escolhido
@@ -148,6 +148,7 @@ class Manager:                                          # Gerenciador de process
             qt = confs[0][0]
             RR = rr(qt)
             qtdProcess = self.numberOfProc
+            executionlog = []
             while True: 
                 # fluxo de execucao do RR
 
@@ -156,19 +157,12 @@ class Manager:                                          # Gerenciador de process
 
                 if(len(self.QueueBloq.sentinel) > 0): # se a fila de bloqueados nao for vazia
                     for bcpindex in range(len(self.QueueBloq.sentinel)): # checa quais bcps devem ir para a fila de prontos
-                        if(0 == self.QueueBloq.sentinel[bcpindex].procResponseTime):
+                        if(0 == self.QueueBloq.sentinel[bcpindex].timeBlockRemain):
+                            self.QueueBloq.sentinel[bcpindex].procState = 0
                             self.List_QRdy[0].queueOne(self.QueueBloq.sentinel[bcpindex])
+                            
                             print("\nprocesso ",self.QueueBloq.sentinel[bcpindex].procID, "saiu de bloqueado para pronto")
-            
-                #NC 1 Entrada de processos nao criados
-                #if( len(self.QueueNCri.sentinel) > 0): # se a lista de nao criados nao terminou de ser percorrida
-                    #confere se tem processos para serem criados
-                #    if(self.Timestamp >= self.QueueNCri.sentinel[self.QueueNCri.indexQueue].procArrivalTime): # se sim, enfilera o novo processo criado
-                #        self.List_QRdy[self.indexQRdy].queueOne(self.QueueNCri.sentinel[self.QueueNCri.indexQueue])
-                #        print("\n",self.QueueNCri.sentinel[self.QueueNCri.indexQueue].procID, "criado")
-                #        self.QueueNCri.sentinel.pop(self.QueueNCri.indexQueue) # apos criar o processo tira ele da fila de nao criados
-                        # assim a cabeça da fila de nao criados ja fica em 0 com o segundo processo da fila
-
+                            self.QueueBloq.sentinel.pop(bcpindex)
                 self.criaListaProntos()
                
                 #EXC 1 Consumo de processos na fila de prontos
@@ -180,9 +174,9 @@ class Manager:                                          # Gerenciador de process
                     # execeto do processo em execucao
                     self.List_QRdy[self.indexQRdy].update_WaitingTime()
                     RR.update_BCPQt(processo) # consome o quantum
-                    terminado = self.List_QRdy[self.indexQRdy].check_Status(self.List_QRdy[self.indexQRdy].get_AIndex()) # checa o status do processo, se terminado é retirado da queue 
+                    terminado = self.List_QRdy[self.indexQRdy].check_Status(self.List_QRdy[self.indexQRdy].indexQueue) # checa o status do processo, se terminado é retirado da queue 
                     print("processo consumido", processo.procID, "\nqt ja consumido",processo.procQtCons,"\n proc state", processo.procState)
-            
+                    executionlog.append([processo.procID, self.Timestamp])
                     
                     if terminado != None: # se o processo terminou
                         finished.append(terminado) # vai pra lista de terminados
@@ -191,36 +185,59 @@ class Manager:                                          # Gerenciador de process
 
 
                     else:
-                        if (processo.procCPUuse in processo.procIOTime): # se tempo de execucao do processo consta em sua lista de IO
+                        if (int(processo.procCPUuse) in processo.procIOTime): # se tempo de execucao do processo consta em sua lista de IO
                             processo.procState = -1
-                            processo.procResponseTime = tms         # recebe o contador de tempo de espera
+                            processo.timeBlockRemain = tms         # recebe o contador de tempo de espera
                             print("processo", processo.procID , " bloqueado")
+                            if (processo.procQtCons == qt):
+                                processo.procQtCons = 0 
                             self.QueueBloq.queueOne(processo)       # vai para a fila de bloqueados
                             self.List_QRdy[self.indexQRdy].sentinel.pop(self.List_QRdy[self.indexQRdy].get_AIndex()) # e eh retirado da fila de prontos
 
 
                         elif (processo.procQtCons == qt ):
                             processo.procQtCons = 0 # seu quantum consumido zera
-
+                            processo.procState = 0
                             print("passa a vez")
-                    self.List_QRdy[self.indexQRdy].next_index()
+                    
+                            self.List_QRdy[self.indexQRdy].next_index()
                 
                 else: # se nao tiver mais o que consumir
                     print("Ocioso...") # quebra o loop  de execucao
+                    print("terminados",len(finished),"total", qtdProcess)
                     if(len(finished) == qtdProcess):
+                        print(executionlog)
+                        gantt = Gantt(executionlog)
+                        gantt.construc_graph(executionlog)
                         print("Resultados")
                         return 1
    
                 #BQ2 Atualizacao do tempo de espera dos processos na fila de bloq
                 if(len(self.QueueBloq.sentinel) > 0): # se a fila de bloqueados nao for vazia
                     for bcpindex in range(len(self.QueueBloq.sentinel)): # checa quais bcps devem ir para a fila de prontos
-                        self.QueueBloq.sentinel[bcpindex].procResponseTime -= 1
+                        self.QueueBloq.sentinel[bcpindex].timeBlockRemain -= 1
 
  
-                
+
                 self.Timestamp += 1
                 print("fim ciclo: ",self.Timestamp)
+                if(self.Timestamp >= 40):
+                    break
+                print(len(finished), qtdProcess, len(self.List_QRdy[0].sentinel), "bloeq: ", len(self.QueueBloq.sentinel))
+                if(len(finished) == qtdProcess):
+                    print(executionlog)
+                    gantt = Gantt(executionlog)
+                    gantt.construc_graph(executionlog)
+                    print("Resultados")
+                    return 1
 
+
+
+
+
+
+
+            
         # Se Prioridade Dinamica 
         if optscheduler == ('DNMC' or 'dnmc'):
             DNMC = dnmc(confs[1])
