@@ -85,9 +85,9 @@ def main():
    
     # Managed.reset_Manager(nfilas)
 
-    Managed2 = Manager(1)
-    Managed2.construc_QNC(rrProcess)
-    Managed2.exec_loop('RR', confs)
+    #Managed2 = Manager(1)
+    #Managed2.construc_QNC(rrProcess)
+    #Managed2.exec_loop('RR', confs)
     
     # Exec DNMC -----------------------
     #Managed3 = Manager(2)

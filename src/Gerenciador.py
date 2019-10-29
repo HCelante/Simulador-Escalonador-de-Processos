@@ -365,6 +365,7 @@ class Manager:                                          # Gerenciador de process
 
             for process in (self.QueueFinished):
                 process.calculate_Waiting()
+
             self.calc_TRM(self.QueueFinished)
             self.calc_TTE(self.QueueFinished)
 
@@ -373,7 +374,7 @@ class Manager:                                          # Gerenciador de process
             SJF = sjf(confs[2])
             blockIndex = 0
             executingProc = None
-
+            outplot = []
             # fluxo de execucao do SJF
             while True:    
                 # Percorre a lista de não criados, preenchendo a lista de prontos
@@ -384,9 +385,12 @@ class Manager:                                          # Gerenciador de process
                     index, bt = SJF.selectProc(self.List_QRdy[0])   # Faz a seleção do processo com menor burstime na fila de prontos, para ser executado, retornando o index dele e o bt
 
                     if (executingProc):
+                        
                         if (executingProc.procState == 1):
                             if (executingProc.procBurstTime > bt):  # caso haja um processo em execução, o processo selecionado na fila só iniciará se ele possuir um bt menor
+                                
                                 executingProc.procState = 0
+                                
                                 self.List_QRdy[0].sentinel.append(executingProc)    # retorna o processo em execução para a lista de prontos
                                 executingProc = self.List_QRdy[0].sentinel[index]   # atribui o novo processo
                                 self.List_QRdy[0].sentinel.pop(index)               # remove da lista
@@ -400,6 +404,7 @@ class Manager:                                          # Gerenciador de process
                     print("TimeStamp: ", self.Timestamp)
 
                     if (executingProc):
+                            outplot.append([executingProc.procID,self.Timestamp])
                             print("ID: ", executingProc.procID, "\tFIO: ", executingProc.procIOTime, "\tSTATE: ",executingProc.procState, "\tBT: ",executingProc.procBurstTime, "\tUSED: ", executingProc.procCPUuse)
 
                             if ((executingProc.procState == 0) or (executingProc.procState == 1)):
@@ -434,6 +439,9 @@ class Manager:                                          # Gerenciador de process
                 else:
                     for process in (self.QueueFinished):
                         process.calculate_Waiting()
+                    print(outplot)
+                    gantt = Gantt(outplot)
+                    gantt.construc_graph(outplot)
                     self.calc_TRM(self.QueueFinished)
                     self.calc_TTE(self.QueueFinished)
                     break
