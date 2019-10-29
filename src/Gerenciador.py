@@ -127,6 +127,7 @@ class Manager:                                          # Gerenciador de process
                             
                     else:
                         self.QueueBloq.sentinel[i].procState = 2            # processo finalizado
+                        self.QueueBloq.sentinel[i].calculate_Turnaround()
                         self.QueueFinished.queueOne(self.QueueBloq.pop(i))  # insere na lista de finalizados 
 
                     # self.QueueBloq.pop(i)                                   # Retira o processo da lista de bloqueados
@@ -250,7 +251,10 @@ class Manager:                                          # Gerenciador de process
             # print("Quantum: ", DNMC.getQuantum())
             
             while(not self.isTheEnd(procDaVez)):    # enquanto houver algum processo para ser escalonado
+                # print("-------------------------------------------------------------------------")
                 
+                print("TimeStamp: ", self.Timestamp)
+
                 A_size = len(self.List_QRdy[0].sentinel)
                 self.criaListaProntos()                             # caso algum processo novo tenha chegado, insere ele na fila de prontos 
                 if(A_size < len(self.List_QRdy[0].sentinel)):       # caso algum processo tenha sido inserido a fila de prontos 
@@ -268,15 +272,19 @@ class Manager:                                          # Gerenciador de process
                     quantum = DNMC.getQuantum()
                     if(A_size != 0):                                # caso haja processo em A, ele é o escolhido para o procesamento
                         procDaVez = self.List_QRdy[0].pop(0)
-                        print("A_size: ",A_size)
-                        print("procDaVez:", procDaVez.procID)
+                        self.calc_RT(procDaVez)
+                        # print("A_size: ",A_size)
+                        # print("procDaVez:", procDaVez.procID)
                         queue = 'A'
 
                     elif(len(self.List_QRdy[1].sentinel) > 0):      # se não, caso haja processos na fila B, ele é o escolhido
                         procDaVez = self.List_QRdy[1].pop(0)
+                        if(procDaVez.procState == 0):
+                            self.calc_RT(procDaVez)
                         queue = 'B' 
                     else:
                         print("Todos os processos estão bloqueados ou ainda não chegaram para o Processamento")
+                 
                 if(procDaVez):
                     if(bloqOut and queue == 'A'):                           # caso um processo tenha saído agora da fila de bloqueados
                         if(not self.List_QRdy[0].isEmpty()):                # caso o processo que saiu de bloqueados tenha ido pra fila A
@@ -286,28 +294,30 @@ class Manager:                                          # Gerenciador de process
                                 aux = procDaVez
                                 procDaVez = self.List_QRdy[0].pop(0)
                                 aux.procQtCons = 0
-                                procState = 0             
+                                procDaVez.procState = 0             
+                                self.calc_RT(procDaVez)
                                 self.List_QRdy[0].queueOne(aux)
 
                     if(quantum > 0 and procDaVez != None):                      # caso ja tenha um processo em execução 
                         if(self.isIO(procDaVez)):                               # Caso haja IO
                             self.QueueBloq.queueOne(procDaVez)                  # realiza IO
-                            procDaVez.procState = 1                             # Atualiza status -> Bloqueado      
+                            procDaVez.procState = -1                             # Atualiza status -> Bloqueado      
                             procDaVez.timeBlockRemain += DNMC.getIOtime()
                             DNMC.changePriority(procDaVez)                      # atualiza a prioridade do processo
                             # print("processo ", procDaVez.procID, "saiu para IO no TimeStamp:", self.Timestamp)
-                            procDaVez = None
+                            procDaVez.procCompletionTime = self.Timestamp
                         
                         else:                                   # Se não houver IO, executa
                             procDaVez.procState = 1             # estado -> Executando
                             procDaVez.procQtCons += 1           # quantum consumido += 1
                             procDaVez.procBurstTime -= 1        # diminui 1 no tempo que o processo precisa executar
                             DNMC.changePriority(procDaVez)      # Atualiza a prioridade
-                            print("proc: ", procDaVez.procID, " executando, faltam ", procDaVez.procBurstTime, "ciclos a serem executados" )                        
+                            # print("proc: ", procDaVez.procID, " executando, faltam ", procDaVez.procBurstTime, "ciclos a serem executados" )                        
                             if(procDaVez.procBurstTime == 0):   # Caso o Processo termine -----------------------------
-                                procDaVez.procCompletionTime = self.Timestamp
                                 procDaVez.procState = 2         #   estado -> Finalizado
+                                procDaVez.calculate_Turnaround()
                                 self.QueueFinished.append(procDaVez)  #   procDaVez -> finalizados
+                                procDaVez.procCompletionTime = self.Timestamp
                                 procDaVez = None
                                 quantum = 0
 
@@ -316,8 +326,9 @@ class Manager:                                          # Gerenciador de process
                 if(quantum == 0 and procDaVez != None):             # caso o processo em execução ja tenha excedido o quantum
                     self.List_QRdy[1].queueOne(procDaVez)           # procDaVez -> B[]
                     procDaVez.procState = 0                         # estado -> Pronto
+                    procDaVez.procCompletionTime = self.Timestamp
                     procDaVez = None
-                                       
+
                     # if(queue == A): # verifica a todo momento se chegou um processo com prioridade maior que a do processo atual
                             
                     
@@ -328,26 +339,35 @@ class Manager:                                          # Gerenciador de process
                     # print("isEmpty A: ", self.List_QRdy[0].isEmpty())
                     # print("isEmpty B: ", self.List_QRdy[1].isEmpty())
                     # print("isEmpty Bloq: ", self.QueueBloq.isEmpty())
-                print("-------------------------------------------------------------------------")
-                if(procDaVez != None):
-                    print("BurstTime: ", procDaVez.procBurstTime)
-                print("A: ") 
-                for i in range(len(self.List_QRdy[0].sentinel)):
-                    # A.append(self.List_QRdy[0].sentinel[i])
-                    print(self.List_QRdy[0].sentinel[i].procID)
-                print("--------")
-                print("B: ")
-                for i in range(len(self.List_QRdy[1].sentinel)):
-                    print(self.List_QRdy[1].sentinel[i].procID)
+                
+                # if(procDaVez != None):
+                #     print("BurstTime: ", procDaVez.procBurstTime)
+                # print("A: ") 
+                # for i in range(len(self.List_QRdy[0].sentinel)):
+                #     # A.append(self.List_QRdy[0].sentinel[i])
+                #     print(self.List_QRdy[0].sentinel[i].procID)
+                # print("--------")
+                # print("B: ")
+                # for i in range(len(self.List_QRdy[1].sentinel)):
+                #     print(self.List_QRdy[1].sentinel[i].procID)
 
-                print("--------")
-                print("Bloq: ")
-                for i in range(len(self.QueueBloq.sentinel)):
-                    print(self.QueueBloq.sentinel[i].procID)
+                # print("--------")
+                # print("Bloq: ")
+                # for i in range(len(self.QueueBloq.sentinel)):
+                #     print(self.QueueBloq.sentinel[i].procID)
 
-                print("Timestamp: ", self.Timestamp)
-                self.Timestamp += 1
-        
+                # print("Timestamp: ", self.Timestamp)
+                # self.Timestamp += 1
+                # print("-------------------------------------------------------------------------")
+
+            # for proc in self.QueueFinished:
+            #     print("processo: ", proc.procID ,"Response Time: ", proc.procResponseTime)
+
+            for process in (self.QueueFinished):
+                process.calculate_Waiting()
+            self.calc_TRM(self.QueueFinished)
+            self.calc_TTE(self.QueueFinished)
+
         if optscheduler == ('SJF' or 'sjf'):
             self.Timestamp = 0
             SJF = sjf(confs[2])

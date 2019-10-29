@@ -72,15 +72,15 @@ def main():
     sjfProcess = mainProcess.copy()
     dnmcProcess = mainProcess.copy()
     
-    # # Recebe o numero de filas
-    # nfilas = 1
+    # Recebe o numero de filas
+    nfilas = 1
     
-    # # # Instanciando a classe Manager
-    # Managed = Manager(nfilas)
+    # # Instanciando a classe Manager
+    Managed = Manager(nfilas)
     
-    # # # Populando a fila de nao criados
-    # Managed.construc_QNC(sjfProcess)
-    # Managed.exec_loop('SJF', confs)
+    # # Populando a fila de nao criados
+    Managed.construc_QNC(sjfProcess)
+    Managed.exec_loop('SJF', confs)
 
    
     # Managed.reset_Manager(nfilas)
