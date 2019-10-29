@@ -344,6 +344,7 @@ class Manager:                                          # Gerenciador de process
                             print("ID: ", executingProc.procID, "\tFIO: ", executingProc.procIOTime, "\tSTATE: ",executingProc.procState, "\tBT: ",executingProc.procBurstTime, "\tUSED: ", executingProc.procCPUuse)
 
                             if ((executingProc.procState == 0) or (executingProc.procState == 1)):
+                                self.calc_RT(executingProc)
                                 executingProc = SJF.executeSJF(executingProc, self.Timestamp)       # executa um novo processo ou um que está executando
                             
                             if (executingProc.procState == -1):
@@ -372,6 +373,10 @@ class Manager:                                          # Gerenciador de process
                         blockIndex = 0
 
                 else:
+                    for process in (self.QueueFinished):
+                        process.calculate_Waiting()
+                    self.calc_TRM(self.QueueFinished)
+                    self.calc_TTE(self.QueueFinished)
                     break
             
                 self.Timestamp += 1
@@ -406,11 +411,24 @@ class Manager:                                          # Gerenciador de process
 
 
     # METODOS DE FEEDBACK ########################################################
-    def calc_TME(self):                   # calculo do tempo medio de espera
-        pass
+    def calc_RT(self, bcp):
+        if (bcp.procCPUuse == 0):
+            bcp.procResponseTime += self.Timestamp - bcp.procArrivalTime
+        else:
+            bcp.procResponseTime += self.Timestamp - bcp.procCompletionTime
 
-    def calc_TTE(self):                   # calculo tempo total de espera
-        pass
+    def calc_TME(self, tte):                   # calculo do tempo medio de espera
+        tme = tte/self.numberOfProc
+        print("Tempo médio de resposta: ", tme)
+        return tme
+
+    def calc_TTE(self, procs):                   # calculo tempo total de espera
+        tte = 0
+        for process in procs:
+            tte += process.procWaitingTime
+        print("Tempo total de resposta: ", tte)
+        self.calc_TME(tte)
+        return tte
     
     def calc_Thrgpt(self):                # calculo throughput do sistema
         pass
@@ -418,5 +436,12 @@ class Manager:                                          # Gerenciador de process
     def calc_TMTMF(self):                 # calculo tamanho maximo e medio das filas
         pass
 
-    def calc_TRM(self):                   # calculo tempo de resposta medio
-        pass
+    def calc_TRM(self, procs):                   # calculo tempo de resposta medio
+        trt = 0
+        print('\n')
+        for process in procs:
+            trt += process.procResponseTime
+        for process in procs:
+            process.tempoRespMedio = (process.procResponseTime/(trt/self.numberOfProc))
+            print("Tempo de resposta médio: ", process.tempoRespMedio, " do processo ", process.procID)
+        

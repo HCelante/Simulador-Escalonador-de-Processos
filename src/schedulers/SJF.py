@@ -27,6 +27,7 @@ class SJF:
         bcp.procCompletionTime = timestamp
         bcp.procCPUuse += 1
       else:                                         # se o bt for 0
+        bcp.calculate_Turnaround()
         bcp.procState = 2                           # o processo recebe o estado de finalizado
 
     return bcp
