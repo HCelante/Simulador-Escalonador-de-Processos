@@ -10,39 +10,38 @@ class SJF:
     self.IOTime = self.randomIOTime()
   
     
-  def executeSJF(self, bcp, timestamp): 
+  def executeSJF(self, bcp, timestamp):       # executa o SJF no bcp
 
-    for i in range (len(bcp.procIOTime)):
-      if (bcp.procIOTime[i] == bcp.procCPUuse):
+    for i in range (len(bcp.procIOTime)):       # verifica a lista de IO do processo
+      if (bcp.procIOTime[i] == bcp.procCPUuse): # se o evento for acionado
         print("\nProcesso "+ str(bcp.procID) +" bloqueado para IO, durante " + str(self.IOTime) + " unidades de tempo\n")
-        bcp.timeBlockRemain = self.IOTime
-        bcp.procState = -1
-        bcp.procIOTime.pop(i)
+        bcp.timeBlockRemain = self.IOTime       # atribui o tempo de bloqueio
+        bcp.procState = -1                      # altera o estado
+        bcp.procIOTime.pop(i)                   # remove o evento da lista do bcp
         break
 
-    if (bcp.procState == 0 or bcp.procState == 1):
-      if (bcp.procBurstTime > 0 ):
-        # print ("entrei")
-        bcp.procState = 1
+    if (bcp.procState == 0 or bcp.procState == 1):  # caso o processo esteja executando
+      if (bcp.procBurstTime > 0 ):                  # e o bt não for zerado
+        bcp.procState = 1                           # aplica os valores no bcp
         bcp.procBurstTime -= 1
         bcp.procCompletionTime = timestamp
         bcp.procCPUuse += 1
-      else: 
-        bcp.procState = 2
+      else:                                         # se o bt for 0
+        bcp.procState = 2                           # o processo recebe o estado de finalizado
 
     return bcp
 
-  def selectProc (self, ReadyQueue):
+  def selectProc (self, ReadyQueue):  # seleciona o processo mais apto para a execução
     selectedIndex = 0
     burstTest = 999999999
     
-    for i in range(len(ReadyQueue.sentinel)):
-      if (ReadyQueue.sentinel[i].procBurstTime < burstTest):
+    for i in range(len(ReadyQueue.sentinel)):                 # testa todos os processos da fila de pronto
+      if (ReadyQueue.sentinel[i].procBurstTime < burstTest):  # verifica se o bt é o menor
         burstTest = ReadyQueue.sentinel[i].procBurstTime
         selectedIndex = i
         
-    return selectedIndex, burstTest
+    return selectedIndex, burstTest                           # retorna a posição do processo na lista e o bt
   
-  def randomIOTime(self):
+  def randomIOTime(self):   # define um valor aleatório para eventos de IO
     value = randrange(self.minIOTime, self.maxIOTime)
     return value
