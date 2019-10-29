@@ -153,7 +153,7 @@ class Manager:                                          # Gerenciador de process
                 # fluxo de execucao do RR
 
                 #BQ1 Entrada de processos bloqueados
-                print("\n\nainda nao criados",len(self.QueueNCri.sentinel)  )
+                #print("\n\nainda nao criados",len(self.QueueNCri.sentinel)  )
 
                 if(len(self.QueueBloq.sentinel) > 0): # se a fila de bloqueados nao for vazia
                     for bcpindex in range(len(self.QueueBloq.sentinel)): # checa quais bcps devem ir para a fila de prontos
@@ -161,7 +161,7 @@ class Manager:                                          # Gerenciador de process
                             self.QueueBloq.sentinel[bcpindex].procState = 0
                             self.List_QRdy[0].queueOne(self.QueueBloq.sentinel[bcpindex])
                             
-                            print("\nprocesso ",self.QueueBloq.sentinel[bcpindex].procID, "saiu de bloqueado para pronto")
+                            print("\nProcesso: ",self.QueueBloq.sentinel[bcpindex].procID, "saiu de bloqueado para pronto")
                             self.QueueBloq.sentinel.pop(bcpindex)
                 self.criaListaProntos()
                
@@ -169,18 +169,19 @@ class Manager:                                          # Gerenciador de process
                 if(len(self.List_QRdy[self.indexQRdy].sentinel) > 0): # se tem processos na fila de prontos
                     # eh criada uma variavel para ser usada nas comparacoes, para melhor legibilidade do codigo
                     processo = self.List_QRdy[self.indexQRdy].sentinel[self.List_QRdy[self.indexQRdy].get_AIndex()] # variavel com bcp do processo em execucao
+                    print("ID: ", processo.procID, "\tFIO: ", processo.procIOTime, "\tSTATE: ",processo.procState, "\tBT: ",processo.procBurstTime, "\tUSED: ", processo.procCPUuse)
 
                     # atualiza o tempo de espera de todos nas listas de prontos
                     # execeto do processo em execucao
                     self.List_QRdy[self.indexQRdy].update_WaitingTime()
                     RR.update_BCPQt(processo) # consome o quantum
                     terminado = self.List_QRdy[self.indexQRdy].check_Status(self.List_QRdy[self.indexQRdy].indexQueue) # checa o status do processo, se terminado é retirado da queue 
-                    print("processo consumido", processo.procID, "\nqt ja consumido",processo.procQtCons,"\n proc state", processo.procState)
+                    #print("processo consumido", processo.procID, "\nqt ja consumido",processo.procQtCons,"\n proc state", processo.procState)
                     executionlog.append([processo.procID, self.Timestamp])
                     
                     if terminado != None: # se o processo terminou
                         finished.append(terminado) # vai pra lista de terminados
-                        print("\n\nprocesso terminado ",terminado[0].procID)
+                        print("\nProcesso terminado: ",terminado[0].procID)
                         #self.List_QRdy[self.indexQRdy].sentinel.pop(self.List_QRdy[self.indexQRdy].get_AIndex())
 
 
@@ -188,7 +189,7 @@ class Manager:                                          # Gerenciador de process
                         if (int(processo.procCPUuse) in processo.procIOTime): # se tempo de execucao do processo consta em sua lista de IO
                             processo.procState = -1
                             processo.timeBlockRemain = tms         # recebe o contador de tempo de espera
-                            print("processo", processo.procID , " bloqueado")
+                            print("\nProcesso: ", processo.procID , " bloqueado")
                             if (processo.procQtCons == qt):
                                 processo.procQtCons = 0 
                             self.QueueBloq.queueOne(processo)       # vai para a fila de bloqueados
@@ -198,13 +199,13 @@ class Manager:                                          # Gerenciador de process
                         elif (processo.procQtCons == qt ):
                             processo.procQtCons = 0 # seu quantum consumido zera
                             processo.procState = 0
-                            print("passa a vez")
+                            print("\nPara a vez para o proximo.")
                     
                             self.List_QRdy[self.indexQRdy].next_index()
                 
                 else: # se nao tiver mais o que consumir
                     print("Ocioso...") # quebra o loop  de execucao
-                    print("terminados",len(finished),"total", qtdProcess)
+                    #print("terminados",len(finished),"total", qtdProcess)
                     if(len(finished) == qtdProcess):
                         print(executionlog)
                         gantt = Gantt(executionlog)
@@ -220,10 +221,10 @@ class Manager:                                          # Gerenciador de process
  
 
                 self.Timestamp += 1
-                print("fim ciclo: ",self.Timestamp)
+                print(">>> Fim Time Stamp: ",self.Timestamp,"\n\n")
                 if(self.Timestamp >= 40):
                     break
-                print(len(finished), qtdProcess, len(self.List_QRdy[0].sentinel), "bloeq: ", len(self.QueueBloq.sentinel))
+                #print(len(finished), qtdProcess, len(self.List_QRdy[0].sentinel), "bloeq: ", len(self.QueueBloq.sentinel))
                 if(len(finished) == qtdProcess):
                     print(executionlog)
                     gantt = Gantt(executionlog)
