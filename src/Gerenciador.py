@@ -248,6 +248,7 @@ class Manager:                                          # Gerenciador de process
             procDaVez = None
             bloqOut = 0
             queue = 'A'
+            dnmcplot = []
             # print("Quantum: ", DNMC.getQuantum())
             
             while(not self.isTheEnd(procDaVez)):    # enquanto houver algum processo para ser escalonado
@@ -299,6 +300,7 @@ class Manager:                                          # Gerenciador de process
                                 self.List_QRdy[0].queueOne(aux)
 
                     if(quantum > 0 and procDaVez != None):                      # caso ja tenha um processo em execução 
+                        dnmcplot.append([procDaVez.procID,self.Timestamp])
                         if(self.isIO(procDaVez)):                               # Caso haja IO
                             self.QueueBloq.queueOne(procDaVez)                  # realiza IO
                             procDaVez.procState = -1                             # Atualiza status -> Bloqueado      
@@ -365,7 +367,8 @@ class Manager:                                          # Gerenciador de process
 
             for process in (self.QueueFinished):
                 process.calculate_Waiting()
-
+            gantt = Gantt(dnmcplot)
+            gantt.construc_graph(dnmcplot)
             self.calc_TRM(self.QueueFinished)
             self.calc_TTE(self.QueueFinished)
 

@@ -76,11 +76,11 @@ def main():
     nfilas = 1
     
     # # Instanciando a classe Manager
-    Managed = Manager(nfilas)
+    #Managed = Manager(nfilas)
     
     # # Populando a fila de nao criados
-    Managed.construc_QNC(sjfProcess)
-    Managed.exec_loop('SJF', confs)
+    #Managed.construc_QNC(sjfProcess)
+    #Managed.exec_loop('SJF', confs)
 
    
     # Managed.reset_Manager(nfilas)
@@ -90,9 +90,9 @@ def main():
     #Managed2.exec_loop('RR', confs)
     
     # Exec DNMC -----------------------
-    #Managed3 = Manager(2)
-    #Managed3.construc_QNC(dnmcProcess)
-    #Managed3.exec_loop('DNMC', confs)
+    Managed3 = Manager(2)
+    Managed3.construc_QNC(dnmcProcess)
+    Managed3.exec_loop('DNMC', confs)
 
 
 main()
