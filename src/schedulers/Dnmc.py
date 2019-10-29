@@ -12,7 +12,7 @@ class DNMC:
     # self.__A = Q(False)            # Fila dos processos que não usaram todo o Quantum, prioridade interna do processo
     # self.__B = Q(False)            # RR, sem prioridades, Quantum fixo, CPU Bound. 
     # self.__Bloq = Q(True)     # Fila de bloqueados
-    self.__Quantum = 1  # Quantum RR B()
+    self.__Quantum = 2  # Quantum RR B()
     self.__IO = IO            # IO = [2] com o tempo/interval de IO
 
   # def isTheEnd(self):                         # 1 se não há mais processos para serem escalonados, 0 caso contrário
