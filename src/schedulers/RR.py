@@ -17,7 +17,6 @@ class RR:
                 bcp.procQtCons = bcp.procQtCons + 1        
                 bcp.procCPUuse = bcp.procCPUuse + 1
                 bcp.procState = 0                   # fica pronto
-                print(bcp.procID, "qt consumido")
             else:                                          # se nao
                 bcp.procQtCons = bcp.procQtCons + 1
                 bcp.procCPUuse = bcp.procCPUuse + 1
