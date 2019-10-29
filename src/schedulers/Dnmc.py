@@ -49,7 +49,9 @@ class DNMC:
     return self.__Quantum
 
   def changePriority(self, proc) :            # Calcula e atualiza a prioridade do processo com base no quantum consumido
-    proc.procPriority = proc.procQtCons/100
+    proc.procPriority = proc.procQtCons/self.getQuantum()
+    if(proc.procPriority < 1):
+      proc.procPriority *= 10
 
   # def ordByPriority(self):
   #   pass
