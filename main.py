@@ -65,34 +65,50 @@ def main():
     mainProcess = []
     for i in range (len(procList)):
       mainProcess.append(BCP(procList[i]))
-    # print(mainProcess[0].procIOTime)
-    # print(type(mainProcess[0]))
 
     rrProcess = mainProcess.copy()  # cópia dos processos
     sjfProcess = mainProcess.copy()
     dnmcProcess = mainProcess.copy()
+
+    op = ''
+    while(True):
+      op = input("1 - DNMC, 2 - RR, 3 - SJF, 4 - Sair")
+      if(op == '3'):        
+        # # Instanciando a classe Manager
+        Managed = Manager(1)
+        # Populando a fila de nao criados
+        Managed.construc_QNC(sjfProcess)
+        Managed.exec_loop('SJF', confs)
+        
+      if(op == '2'):
+        Managed2 = Manager(1)
+        Managed2.construc_QNC(rrProcess)
+        Managed2.exec_loop('RR', confs)
+      
+      if(op == '1'):
+        Managed3 = Manager(2)
+        Managed3.construc_QNC(dnmcProcess)
+        Managed3.exec_loop('DNMC', confs)
+
+      if(op == '4'):
+        return 0
+
+
     
-    # Recebe o numero de filas
-    nfilas = 1
-    
-    # # Instanciando a classe Manager
-    #Managed = Manager(nfilas)
-    
-    # # Populando a fila de nao criados
-    #Managed.construc_QNC(sjfProcess)
-    #Managed.exec_loop('SJF', confs)
 
    
     # Managed.reset_Manager(nfilas)
 
-    #Managed2 = Manager(1)
-    #Managed2.construc_QNC(rrProcess)
-    #Managed2.exec_loop('RR', confs)
+    # Managed2 = Manager(1)
+    # Managed2.construc_QNC(rrProcess)
+    # Managed2.exec_loop('RR', confs)
     
-    # Exec DNMC -----------------------
-    Managed3 = Manager(2)
-    Managed3.construc_QNC(dnmcProcess)
-    Managed3.exec_loop('DNMC', confs)
+
+    # Managed.reset_Manager(2)
+    # # Exec DNMC -----------------------
+    # Managed3 = Manager(2)
+    # Managed3.construc_QNC(dnmcProcess)
+    # Managed3.exec_loop('DNMC', confs)
 
 
 main()

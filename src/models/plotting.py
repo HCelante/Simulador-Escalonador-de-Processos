@@ -54,8 +54,8 @@ class Gantt:
                     multiplus.append(proc)
             acumulado.append(multiplus)
 
-        print("ACUMULADO",acumulado) 
-        print(setnome)
+        # print("ACUMULADO",acumulado) 
+        # print(setnome)
         
         anterior = -1
         cont = 0
@@ -64,7 +64,7 @@ class Gantt:
             outlist = []
             anterior = -2
             for timestamp in processo:
-                print("\nprocesso",timestamp[0],timestamp[1])
+                # print("\nprocesso",timestamp[0],timestamp[1])
                 if(anterior+1 != timestamp[1]):
                     outlist.append([timestamp[1],1])
                     anterior = timestamp[1]
@@ -78,7 +78,7 @@ class Gantt:
             #print(len(self.list_consun))
             cont += 1
             
-        print(self.list_consun)
+        # print(self.list_consun)
         #print(self.list_consun)
         #for nome in nomes:
         #    print(nome)
