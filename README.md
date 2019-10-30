@@ -1,5 +1,5 @@
 # Simulador de Escalonador de Processos
-####    Process Schedule Simulator
+####    Process Scheduler Simulator
 ####    Round Robin, Shortest Job First and Dynamic Priority 
 
 
